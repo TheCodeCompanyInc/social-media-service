@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ""
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+    database: h2
+  application:
+    security:
+      jwt:
+        secret-key: custom-secret-key
+        access-token-expiration: 604800000
+        refresh-token-expiration: 2592000000
+        vehicle-token-expiration: 604800000
+        vehicle-refresh-token-expiration: 2592000000

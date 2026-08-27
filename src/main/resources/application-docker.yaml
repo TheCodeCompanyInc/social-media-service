@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:postgis}:${DB_PORT:5432}/${DB_NAME:thecodecompany_social_media_db}
+    username: ${DB_USERNAME:}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000
+  jpa:
+    hibernate:
+      ddl-auto: ${HIBERNATE_DDL_AUTO:create-drop}
+    show-sql: ${HIBERNATE_SHOW_SQL:false}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+    database: postgresql
+  application:
+    security:
+      jwt:
+        secret-key: ${JWT_SECRET_KEY:custom-secret-key}
+        access-token-expiration: ${JWT_ACCESS_TOKEN_EXPIRATION:604800000}
+        refresh-token-expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:2592000000}
+        vehicle-token-expiration: ${JWT_VEHICLE_TOKEN_EXPIRATION:604800000}
+        vehicle-refresh-token-expiration: ${JWT_VEHICLE_REFRESH_TOKEN_EXPIRATION:2592000000}
