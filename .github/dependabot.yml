@@ -1,30 +1,17 @@
 version: 2
 updates:
-  # Maven dependencies (Spring Boot, etc.)
+  # Maven dependencies
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "06:00"
-    open-pull-requests-limit: 10
-    groups:
-      spring-boot:
-        patterns:
-          - "org.springframework.boot:*"
-          - "org.springframework:*"
-    labels:
-      - "dependencies"
-      - "java"
-    commit-message:
-      prefix: "chore"
-      include: "scope"
+    open-pull-requests-limit: 0
 
-  # GitHub Actions used in your workflows
+  # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    labels:
-      - "dependencies"
-      - "ci"
+    open-pull-requests-limit: 0
