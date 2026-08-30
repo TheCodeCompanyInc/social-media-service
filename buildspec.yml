@@ -9,8 +9,13 @@ phases:
   pre_build:
     commands:
       - echo "Starting build..."
-      - chmod +x mvnw
-      - ./mvnw clean package -DskipTests
+      - echo "Java version:"
+      - java -version
+      - echo "Maven version:"
+      - mvn -version
+
+      - echo "Building Spring Boot application..."
+      - mvn clean package -DskipTests
 
       - echo "Logging in to Amazon ECR..."
       - aws --version
@@ -20,17 +25,29 @@ phases:
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=$COMMIT_HASH
 
+      - echo "Repository URI: $REPOSITORY_URI"
+      - echo "Image tag: $IMAGE_TAG"
+
   build:
     commands:
       - echo "Build started on $(date)"
       - echo "Building Docker image..."
+
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
       - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
 
   post_build:
     commands:
       - echo "Build completed on $(date)"
-      - echo "Pushing Docker image..."
+      - echo "Pushing Docker image to ECR..."
+
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:latest
-      - echo "Docker image pushed successfully"
+
+      - echo "Docker images pushed successfully:"
+      - echo "$REPOSITORY_URI:$IMAGE_TAG"
+      - echo "$REPOSITORY_URI:latest"
+
+artifacts:
+  files:
+    - target/*.jar
