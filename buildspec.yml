@@ -19,35 +19,33 @@ phases:
 
       - echo "Logging in to Amazon ECR..."
       - aws --version
-      - REPOSITORY_URI=975628797135.dkr.ecr.eu-central-1.amazonaws.com/social-media
-      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - 'REPOSITORY_URI=975628797135.dkr.ecr.eu-central-1.amazonaws.com/social-media'
+      - 'aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI'
+      - 'COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)'
+      - 'IMAGE_TAG=$COMMIT_HASH'
 
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - IMAGE_TAG=$COMMIT_HASH
-
-      - echo "Repository URI: $REPOSITORY_URI"
-      - echo "Image tag: $IMAGE_TAG"
+      - echo "Repository URI:"
+      - echo "$REPOSITORY_URI"
+      - echo "Image tag:"
+      - echo "$IMAGE_TAG"
 
   build:
     commands:
       - echo "Build started on $(date)"
       - echo "Building Docker image..."
-
-      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
-      - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
+      - 'docker build -t $REPOSITORY_URI:$IMAGE_TAG .'
+      - 'docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest'
 
   post_build:
     commands:
       - echo "Build completed on $(date)"
       - echo "Pushing Docker image to ECR..."
-
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - docker push $REPOSITORY_URI:latest
-
+      - 'docker push $REPOSITORY_URI:$IMAGE_TAG'
+      - 'docker push $REPOSITORY_URI:latest'
       - echo "Docker images pushed successfully:"
-      - echo "$REPOSITORY_URI:$IMAGE_TAG"
-      - echo "$REPOSITORY_URI:latest"
+      - 'echo "$REPOSITORY_URI:$IMAGE_TAG"'
+      - 'echo "$REPOSITORY_URI:latest"'
 
 artifacts:
   files:
-    - target/*.jar
+    - 'target/*.jar'
