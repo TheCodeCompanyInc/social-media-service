@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
-import com.thecodecompanyinc.social_media_service.dto.UpdateUserDto;
+import com.thecodecompanyinc.social_media_service.dto.auth.UpdateUserDto;
 import com.thecodecompanyinc.social_media_service.entity.Role;
 import com.thecodecompanyinc.social_media_service.entity.User;
 

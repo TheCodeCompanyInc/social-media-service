@@ -10,10 +10,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.thecodecompanyinc.social_media_service.dto.LoginUserDto;
-import com.thecodecompanyinc.social_media_service.dto.RegisterUserDto;
-import com.thecodecompanyinc.social_media_service.dto.ResetPasswordDto;
-import com.thecodecompanyinc.social_media_service.dto.VerifyCodeDto;
+import com.thecodecompanyinc.social_media_service.dto.auth.LoginUserDto;
+import com.thecodecompanyinc.social_media_service.dto.auth.RegisterUserDto;
+import com.thecodecompanyinc.social_media_service.dto.auth.ResetPasswordDto;
+import com.thecodecompanyinc.social_media_service.dto.auth.VerifyCodeDto;
 import com.thecodecompanyinc.social_media_service.entity.Role;
 import com.thecodecompanyinc.social_media_service.entity.User;
 import com.thecodecompanyinc.social_media_service.exception.ResourceNotFoundException;

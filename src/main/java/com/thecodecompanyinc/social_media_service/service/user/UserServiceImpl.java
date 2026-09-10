@@ -9,7 +9,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thecodecompanyinc.social_media_service.dto.UpdateUserDto;
+import com.thecodecompanyinc.social_media_service.dto.auth.UpdateUserDto;
 import com.thecodecompanyinc.social_media_service.entity.Role;
 import com.thecodecompanyinc.social_media_service.entity.User;
 import com.thecodecompanyinc.social_media_service.exception.ResourceAlreadyExistsException;

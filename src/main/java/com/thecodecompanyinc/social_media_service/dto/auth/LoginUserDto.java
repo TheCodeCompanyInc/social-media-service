@@ -1,4 +1,4 @@
-package com.thecodecompanyinc.social_media_service.dto;
+package com.thecodecompanyinc.social_media_service.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
