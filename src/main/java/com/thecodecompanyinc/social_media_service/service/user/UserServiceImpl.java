@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.thecodecompanyinc.social_media_service.dto.UpdateUserDto;
 import com.thecodecompanyinc.social_media_service.entity.Role;
 import com.thecodecompanyinc.social_media_service.entity.User;
+import com.thecodecompanyinc.social_media_service.exception.ResourceAlreadyExistsException;
+import com.thecodecompanyinc.social_media_service.exception.ResourceNotFoundException;
 import com.thecodecompanyinc.social_media_service.repository.UserRepository;
 import com.thecodecompanyinc.social_media_service.service.jwt.JwtService;
 
@@ -32,7 +34,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> userOptional = userRepository.findByEmail(user.getEmail());
         if (userOptional.isPresent()) {
             log.warn("Email already exists: {}", user.getEmail());
-            throw new RuntimeException("Email Already Exists!");
+            throw new ResourceAlreadyExistsException("Email Already Exists!");
         }
 
         User savedUser = userRepository.save(user);
@@ -59,7 +61,7 @@ public class UserServiceImpl implements UserService {
                         .orElseThrow(
                                 () -> {
                                     log.error("User not found for email: {}", email);
-                                    return new RuntimeException("User not found");
+                                    return new ResourceNotFoundException("User not found");
                                 });
             }
             log.warn("Token validation failed");
@@ -77,7 +79,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(
                         () -> {
                             log.error("User not found with id: {}", id);
-                            return new RuntimeException("User not found");
+                            return new ResourceNotFoundException("User not found");
                         });
     }
 
@@ -90,7 +92,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(
                         () -> {
                             log.error("User not found with email: {}", email);
-                            return new RuntimeException("User not found");
+                            return new ResourceNotFoundException("User not found");
                         });
     }
 
@@ -149,7 +151,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(
                         () -> {
                             log.error("User not found with email: {}", email);
-                            return new RuntimeException("user not found");
+                            return new ResourceNotFoundException("user not found");
                         });
         user.setFirebaseToken(fcmToken);
         log.info("FCM token updated successfully for user id: {}", user.getId());

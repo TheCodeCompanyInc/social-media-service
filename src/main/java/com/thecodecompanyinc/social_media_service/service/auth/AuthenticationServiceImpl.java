@@ -16,8 +16,10 @@ import com.thecodecompanyinc.social_media_service.dto.ResetPasswordDto;
 import com.thecodecompanyinc.social_media_service.dto.VerifyCodeDto;
 import com.thecodecompanyinc.social_media_service.entity.Role;
 import com.thecodecompanyinc.social_media_service.entity.User;
+import com.thecodecompanyinc.social_media_service.exception.ResourceNotFoundException;
 import com.thecodecompanyinc.social_media_service.response.LoginResponse;
 import com.thecodecompanyinc.social_media_service.service.jwt.JwtService;
+import com.thecodecompanyinc.social_media_service.service.mail.MailSenderService;
 import com.thecodecompanyinc.social_media_service.service.user.UserService;
 
 import jakarta.transaction.Transactional;
@@ -31,6 +33,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserService userService;
     private final JwtService jwtService;
+    private final MailSenderService mailSenderService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private static final long ONE_DAY_MS = 86_400_000L;
@@ -76,7 +79,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String code = Integer.toString(user.getCode());
         User createdUser = userService.saveUser(user);
         log.debug("User saved, sending verification email to: {}", user.getEmail());
-        // mailSenderService.sendEmail(user.getEmail(), "Verification Code", code);
+        mailSenderService.sendEmail(user.getEmail(), "Verification Code", code);
 
         log.info("Signup successful for email: {}", registerUserDto.getEmail());
         return createdUser;
@@ -141,7 +144,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .orElseThrow(
                         () -> {
                             log.error("User not found for email: {}", email);
-                            return new RuntimeException("User not found");
+                            return new ResourceNotFoundException("User not found");
                         });
 
         String accessToken = jwtService.generateAccessToken(user);
@@ -174,7 +177,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .orElseThrow(
                         () -> {
                             log.error("User not found for email: {}", email);
-                            return new RuntimeException("User not found");
+                            return new ResourceNotFoundException("User not found");
                         });
         int verificationCode = user.getCode();
 
@@ -199,7 +202,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .orElseThrow(
                         () -> {
                             log.error("User not found for email: {}", email);
-                            return new RuntimeException("User not found");
+                            return new ResourceNotFoundException("User not found");
                         });
         int newOtp = generateRandomOtp();
 
@@ -208,7 +211,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setEmailVerified(false);
 
         String code = Integer.toString(user.getCode());
-        // mailSenderService.sendEmail(user.getEmail(), "Verification Code", code);
+        mailSenderService.sendEmail(user.getEmail(), "Verification Code", code);
         log.info("OTP regenerated and sent to email: {}", email);
     }
 
@@ -225,7 +228,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .orElseThrow(
                         () -> {
                             log.error("User not found for email: {}", email);
-                            return new RuntimeException("User not found");
+                            return new ResourceNotFoundException("User not found");
                         });
         int verificationCode = user.getCode();
 
