@@ -121,9 +121,15 @@ public class UserServiceImpl implements UserService {
         User user = getUserByJwt(authHeader);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-        user.setFirstName(updateUserDto.getFirstName());
-        user.setLastName(updateUserDto.getLastName());
-        user.setDob(new Date(simpleDateFormat.parse(updateUserDto.getDob()).getTime()));
+        if (updateUserDto.getFirstName() != null) {
+            user.setFirstName(updateUserDto.getFirstName());
+        }
+        if (updateUserDto.getLastName() != null) {
+            user.setLastName(updateUserDto.getLastName());
+        }
+        if (updateUserDto.getDob() != null) {
+            user.setDob(new Date(simpleDateFormat.parse(updateUserDto.getDob()).getTime()));
+        }
 
         log.info("User profile updated successfully for user id: {}", user.getId());
         return user;

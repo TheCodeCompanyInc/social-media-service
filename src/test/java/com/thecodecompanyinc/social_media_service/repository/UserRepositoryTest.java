@@ -198,7 +198,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Should handle concurrent updates correctly")
+    @DisplayName("Should apply last-write-wins behavior for sequential updates")
     void shouldHandleConcurrentUpdates() {
         // Arrange
         User saved = entityManager.persist(user1);

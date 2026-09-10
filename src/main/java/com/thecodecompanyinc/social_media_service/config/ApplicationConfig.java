@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thecodecompanyinc.social_media_service.exception.ResourceNotFoundException;
 import com.thecodecompanyinc.social_media_service.service.user.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return email -> userService.getUser(email).orElseThrow(() -> new RuntimeException("User not found!"));
+        return email -> userService.getUser(email).orElseThrow(() -> new ResourceNotFoundException("User not found!"));
     }
 
     @Bean
