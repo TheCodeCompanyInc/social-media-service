@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-class JwtServiceImpl implements JwtService {
+public class JwtServiceImpl implements JwtService {
 
     @Value("${spring.application.security.jwt.secret-key}")
     private String secretKey;
