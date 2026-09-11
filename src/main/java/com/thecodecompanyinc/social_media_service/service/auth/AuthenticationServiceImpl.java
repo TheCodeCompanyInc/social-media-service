@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.thecodecompanyinc.social_media_service.dto.auth.LoginUserDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.RegisterUserDto;
@@ -17,12 +18,13 @@ import com.thecodecompanyinc.social_media_service.dto.auth.VerifyCodeDto;
 import com.thecodecompanyinc.social_media_service.entity.Role;
 import com.thecodecompanyinc.social_media_service.entity.User;
 import com.thecodecompanyinc.social_media_service.exception.ResourceNotFoundException;
+import com.thecodecompanyinc.social_media_service.mapper.LoginResponseMapper;
+import com.thecodecompanyinc.social_media_service.mapper.UserMapper;
 import com.thecodecompanyinc.social_media_service.response.LoginResponse;
 import com.thecodecompanyinc.social_media_service.service.jwt.JwtService;
 import com.thecodecompanyinc.social_media_service.service.mail.MailSenderService;
 import com.thecodecompanyinc.social_media_service.service.user.UserService;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,6 +38,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final MailSenderService mailSenderService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final UserMapper userMapper;
+    private final LoginResponseMapper loginResponseMapper;
     private static final long ONE_DAY_MS = 86_400_000L;
 
     @Override
@@ -48,7 +52,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String refreshToken = jwtService.generateRefreshToken(authenticatedUser);
 
         log.info("Login successful for email: {}", loginUserDto.getEmail());
-        return createLoginResponse(accessToken, refreshToken, authenticatedUser);
+        return loginResponseMapper.toLoginResponse(accessToken, refreshToken, authenticatedUser, jwtService);
     }
 
     private User authenticate(LoginUserDto loginUserDto) {
@@ -68,9 +72,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    @Transactional
     public User signup(RegisterUserDto registerUserDto, String role) {
         log.info("Signup attempt for email: {} with role: {}", registerUserDto.getEmail(), role);
-        User user = createUserFromDto(registerUserDto);
+        User user = userMapper.toUser(registerUserDto, passwordEncoder);
         if (role.equals("ADMIN")) {
             user.setRole(Role.ADMIN);
             log.debug("Setting role to ADMIN for email: {}", registerUserDto.getEmail());
@@ -83,26 +88,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         log.info("Signup successful for email: {}", registerUserDto.getEmail());
         return createdUser;
-    }
-
-    private User createUserFromDto(RegisterUserDto registerUserDto) {
-        log.debug("Creating user from DTO for email: {}", registerUserDto.getEmail());
-        User user = new User();
-        Date now = new Date();
-        Date codeExpiryDate = new Date(now.getTime() + ONE_DAY_MS);
-
-        user.setEmail(registerUserDto.getEmail());
-        user.setPasswordHash(passwordEncoder.encode(registerUserDto.getPassword()));
-        user.setFirstName(registerUserDto.getFirstName());
-        user.setLastName(registerUserDto.getLastName());
-        user.setPhoneNumber(registerUserDto.getPhoneNumber());
-        user.setJoin_date(new Timestamp(now.getTime()));
-        user.setCode(generateRandomOtp());
-        user.setCodeExpiredAt(new Timestamp(codeExpiryDate.getTime()));
-        user.setEmailVerified(false);
-
-        log.debug("User entity created for email: {}", registerUserDto.getEmail());
-        return user;
     }
 
     private int generateRandomOtp() {
@@ -150,19 +135,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String accessToken = jwtService.generateAccessToken(user);
         log.debug("New access token generated for email: {}", email);
 
-        return createLoginResponse(accessToken, refreshToken, user);
-    }
-
-    private LoginResponse createLoginResponse(String accessToken, String refreshToken, User user) {
-        log.debug("Creating login response for user id: {}", user.getId());
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setAccessToken(accessToken);
-        loginResponse.setRefreshToken(refreshToken);
-        loginResponse.setAccessTokenExpiresIn(jwtService.extractExpiration(accessToken));
-        loginResponse.setRefreshTokenExpiresIn(jwtService.extractExpiration(refreshToken));
-        loginResponse.setUser(user);
-
-        return loginResponse;
+        return loginResponseMapper.toLoginResponse(accessToken, refreshToken, user, jwtService);
     }
 
     @Override
