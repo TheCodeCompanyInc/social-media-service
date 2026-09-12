@@ -1,7 +1,11 @@
-package com.thecodecompanyinc.social_media_service.security;
+package com.thecodecompanyinc.social_media_service.config;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+import com.thecodecompanyinc.social_media_service.security.CustomAccessDeniedHandler;
+import com.thecodecompanyinc.social_media_service.security.CustomAuthenticationEntryPoint;
+import com.thecodecompanyinc.social_media_service.security.JwtAuthenticationFilter;
+import com.thecodecompanyinc.social_media_service.security.OAuth2LoginSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -28,7 +32,7 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler) throws Exception {
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -43,7 +47,8 @@ public class SecurityConfig {
                 .exceptionHandling(
                         exception -> exception
                                 .accessDeniedHandler(customAccessDeniedHandler)
-                                .authenticationEntryPoint(customAuthenticationEntryPoint));
+                                .authenticationEntryPoint(customAuthenticationEntryPoint))
+                .oauth2Login(oauth -> oauth.successHandler(oAuth2LoginSuccessHandler));
 
         return http.build();
     }
