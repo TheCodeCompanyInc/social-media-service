@@ -1,9 +1,13 @@
 package com.thecodecompanyinc.social_media_service.service.auth;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Random;
 
+import com.thecodecompanyinc.social_media_service.dto.auth.*;
+import com.thecodecompanyinc.social_media_service.service.google.GoogleTokenService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,10 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.thecodecompanyinc.social_media_service.dto.auth.LoginUserDto;
-import com.thecodecompanyinc.social_media_service.dto.auth.RegisterUserDto;
-import com.thecodecompanyinc.social_media_service.dto.auth.ResetPasswordDto;
-import com.thecodecompanyinc.social_media_service.dto.auth.VerifyCodeDto;
 import com.thecodecompanyinc.social_media_service.entity.Role;
 import com.thecodecompanyinc.social_media_service.entity.User;
 import com.thecodecompanyinc.social_media_service.exception.ResourceNotFoundException;
@@ -40,6 +40,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
     private final LoginResponseMapper loginResponseMapper;
+    private final GoogleTokenService googleTokenService;
     private static final long ONE_DAY_MS = 86_400_000L;
 
     @Override
@@ -55,6 +56,34 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return loginResponseMapper.toLoginResponse(accessToken, refreshToken, authenticatedUser, jwtService);
     }
 
+    @Override
+    @Transactional
+    public LoginResponse googleLogin(GoogleIdTokenDto googleIdTokenDto)
+            throws GeneralSecurityException, IOException {
+        log.info("Google login attempt");
+
+        // Verify the Google ID token and extract user information
+        GoogleLoginDto googleUserInfo =
+                googleTokenService.verifyIdToken(googleIdTokenDto.getIdToken());
+        log.info("Google token verified for email: {}", googleUserInfo.getEmail());
+
+        // Find existing user or create a new one
+        User user = userService.findOrCreateGoogleUser(googleUserInfo);
+        log.info("User retrieved/created for Google login: {}", user.getEmail());
+
+        // Update FCM token if provided
+        if (googleIdTokenDto.getFcmToken() != null && !googleIdTokenDto.getFcmToken().isEmpty()) {
+            userService.updateFcmToken(user.getEmail(), googleIdTokenDto.getFcmToken());
+            log.debug("FCM token updated for user: {}", user.getEmail());
+        }
+
+        // Generate JWT tokens
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+
+        log.info("Google login successful for email: {}", user.getEmail());
+        return createLoginResponse(accessToken, refreshToken, user);
+    }
     private User authenticate(LoginUserDto loginUserDto) {
         log.debug("Authenticating user with email: {}", loginUserDto.getEmail());
         // 1. calls the UserDetailsService.loadUserByUsername() to fetch the user from
@@ -102,6 +131,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         // for testing environment, OTP is always 111111
         log.debug("OTP generated (test mode)");
         return 111111;
+    }
+
+
+    private LoginResponse createLoginResponse(String accessToken, String refreshToken, User user) {
+        log.debug("Creating login response for user id: {}", user.getId());
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setAccessToken(accessToken);
+        loginResponse.setRefreshToken(refreshToken);
+        loginResponse.setAccessTokenExpiresIn(jwtService.extractExpiration(accessToken));
+        loginResponse.setRefreshTokenExpiresIn(jwtService.extractExpiration(refreshToken));
+        loginResponse.setUser(user);
+
+        return loginResponse;
     }
 
     @Override

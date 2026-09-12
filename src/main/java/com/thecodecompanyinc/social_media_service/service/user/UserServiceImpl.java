@@ -1,14 +1,6 @@
 package com.thecodecompanyinc.social_media_service.service.user;
 
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.thecodecompanyinc.social_media_service.dto.auth.GoogleLoginDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.UpdateUserDto;
 import com.thecodecompanyinc.social_media_service.entity.Role;
 import com.thecodecompanyinc.social_media_service.entity.User;
@@ -16,9 +8,17 @@ import com.thecodecompanyinc.social_media_service.exception.ResourceAlreadyExist
 import com.thecodecompanyinc.social_media_service.exception.ResourceNotFoundException;
 import com.thecodecompanyinc.social_media_service.repository.UserRepository;
 import com.thecodecompanyinc.social_media_service.service.jwt.JwtService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +40,30 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
         log.info("User saved successfully with id: {}", savedUser.getId());
         return savedUser;
+    }
+
+    @Override
+    public User findOrCreateGoogleUser(GoogleLoginDto dto) {
+        log.info("Finding or creating Google user with email: {}", dto.getEmail());
+        return getUser(dto.getEmail())
+                .orElseGet(
+                        () -> {
+                            log.info("Creating new Google user with email: {}", dto.getEmail());
+                            User newUser = new User();
+                            newUser.setEmail(dto.getEmail());
+                            newUser.setFirstName(
+                                    dto.getGivenName() != null
+                                            ? dto.getGivenName()
+                                            : dto.getName());
+                            newUser.setLastName(
+                                    dto.getFamilyName() != null ? dto.getFamilyName() : "");
+                            newUser.setRole(Role.CLIENT);
+                            newUser.setPasswordHash("N/A");
+                            newUser.setPhoneNumber("N/A");
+                            newUser.setJoin_date(new Timestamp(new java.util.Date().getTime()));
+                            newUser.setEmailVerified(true);
+                            return saveUser(newUser);
+                        });
     }
 
     @Override
