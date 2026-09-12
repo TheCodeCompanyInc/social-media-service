@@ -51,7 +51,30 @@ application:
       access-token-expiration: ${JWT_ACCESS_TOKEN_EXPIRATION:604800000}
       refresh-token-expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:2592000000}
 
+    security:
+      oauth2:
+        client:
+          registration:
+            google:
+              client-id: ${OAUTH2_GOOGLE_CLIENT_ID:placeholder-id}
+              client-secret: ${OAUTH2_GOOGLE_CLIENT_SECRET:placeholder-secret}
+              scope:
+                - email
+                - profile
+              redirect-uri: ${OAUTH2_GOOGLE_REDIRECT_URI:http://localhost:8000/login/oauth2/code/google}
+              client-name: Google
+          provider:
+            google:
+              authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+              token-uri: https://oauth2.googleapis.com/token
+              user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+              user-name-attribute: sub
 
+google:
+  android:
+    client-id: ${OAUTH2_GOOGLE_ANDROID_CLIENT_ID:placeholder-android}
+  ios:
+    client-id: ${OAUTH2_GOOGLE_IOS_CLIENT_ID:placeholder-ios}
 
 server:
   port: 8000
