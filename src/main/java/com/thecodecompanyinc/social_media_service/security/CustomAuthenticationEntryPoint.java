@@ -2,6 +2,7 @@ package com.thecodecompanyinc.social_media_service.security;
 
 import java.io.IOException;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -26,7 +27,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(
             HttpServletRequest request,
             HttpServletResponse response,
-            AuthenticationException authException)
+            @NonNull AuthenticationException authException)
             throws IOException, ServletException {
 
         log.warn("Unauthorized access attempt to: {}", request.getRequestURI());
