@@ -27,7 +27,7 @@ spring:
   application:
     security:
       jwt:
-        secret-key: custom-secret-key
+        secret-key: custom-secret-key-that-is-at-least-256-bits-long-for-hmac-sha-algorithm-security
         access-token-expiration: 604800000
         refresh-token-expiration: 2592000000
         vehicle-token-expiration: 604800000
