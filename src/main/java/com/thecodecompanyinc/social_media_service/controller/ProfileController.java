@@ -1,6 +1,7 @@
 package com.thecodecompanyinc.social_media_service.controller;
 
 import com.thecodecompanyinc.social_media_service.dto.profile.ProfileResponse;
+import com.thecodecompanyinc.social_media_service.dto.profile.ProfileUpdateRequest;
 import com.thecodecompanyinc.social_media_service.service.profile.ProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,4 +25,11 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.getProfileById(id));
     }
 
+    @PutMapping("/{id}")
+    @Operation(summary = "Update Profile by ID", description = "Update a profile by its ID")
+    public ResponseEntity<ProfileResponse> updateProfile(
+            @PathVariable Long id,
+            @RequestBody @Valid ProfileUpdateRequest profileUpdateRequest) {
+        return ResponseEntity.ok(profileService.updateProfile(id, profileUpdateRequest));
+    }
 }
