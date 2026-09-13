@@ -11,4 +11,6 @@ public interface ProfileMapper {
     @Mapping(source = "id", target = "userId")
     ProfileResponse toResponse(User user);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void applyUpdate(ProfileUpdateRequest request, @MappingTarget User user);
 }
