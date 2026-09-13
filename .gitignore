@@ -74,3 +74,4 @@ build/
 nul
 *.env
 qodana.yaml
+opencode.json
