@@ -5,11 +5,11 @@ import lombok.Data;
 
 @Data
 public class UpdateUserDto {
-    @Size(max = 30, message = "First name must be less than 30 characters")
-    private String firstName;
+  @Size(max = 30, message = "First name must be less than 30 characters")
+  private String firstName;
 
-    @Size(max = 30, message = "Last name must be less than 30 characters")
-    private String lastName;
+  @Size(max = 30, message = "Last name must be less than 30 characters")
+  private String lastName;
 
-    private String dob;
+  private String dob;
 }

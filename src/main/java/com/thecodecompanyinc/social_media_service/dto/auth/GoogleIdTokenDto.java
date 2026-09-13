@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GoogleIdTokenDto {
 
-    @NotBlank(message = "ID token is required")
-    private String idToken;
+  @NotBlank(message = "ID token is required")
+  private String idToken;
 
-    private String fcmToken;
+  private String fcmToken;
 }
