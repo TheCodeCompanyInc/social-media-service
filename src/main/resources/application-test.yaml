@@ -22,6 +22,8 @@ spring:
         jdbc:
           time_zone: UTC
     database: h2
+  mail:
+    host: localhost
   application:
     security:
       jwt:
