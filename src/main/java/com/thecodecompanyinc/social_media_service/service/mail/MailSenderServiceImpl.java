@@ -11,20 +11,19 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class MailSenderServiceImpl implements MailSenderService {
 
-    private final JavaMailSender mailSender;
+  private final JavaMailSender mailSender;
 
-    @Override
-    public void sendEmail(String toEmail, String subject, String body) {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setFrom("muhammad.heshamyt@gmail.com");
-        mailMessage.setTo(toEmail);
-        mailMessage.setText(body);
-        mailMessage.setSubject(subject);
+  @Override
+  public void sendEmail(String toEmail, String subject, String body) {
+    SimpleMailMessage mailMessage = new SimpleMailMessage();
+    mailMessage.setFrom("muhammad.heshamyt@gmail.com");
+    mailMessage.setTo(toEmail);
+    mailMessage.setText(body);
+    mailMessage.setSubject(subject);
 
-        // For Testing Environment
-        if (false)
-            mailSender.send(mailMessage);
+    // For Testing Environment
+    if (false) mailSender.send(mailMessage);
 
-        log.info("Mail Sent to {} Successfully!", toEmail);
-    }
+    log.info("Mail Sent to {} Successfully!", toEmail);
+  }
 }

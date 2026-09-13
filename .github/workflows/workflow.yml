@@ -1,0 +1,165 @@
+name: Build, Run, and Test API
+
+on:
+    push:
+        branches:
+            - master
+
+    pull_request:
+        branches:
+            - master
+            - dev
+
+jobs:
+    build-run-test:
+        runs-on: ubuntu-latest
+
+        steps:
+            # ---------------------------------------------------------
+            # Checkout
+            # ---------------------------------------------------------
+            - name: Checkout branch
+              uses: actions/checkout@v4
+
+            # ---------------------------------------------------------
+            # Java
+            # ---------------------------------------------------------
+            - name: Set up Java
+              uses: actions/setup-java@v4
+              with:
+                  distribution: temurin
+                  java-version: '21'
+                  cache: maven
+
+            # ---------------------------------------------------------
+            # Start PostgreSQL and Redis
+            # ---------------------------------------------------------
+            - name: Start PostgreSQL and Redis
+              run: |
+                  docker compose up -d database cache
+
+            # ---------------------------------------------------------
+            # Wait for PostgreSQL
+            # ---------------------------------------------------------
+            - name: Wait for PostgreSQL
+              run: |
+                  echo "Waiting for PostgreSQL..."
+
+                  for i in {1..30}; do
+                    if docker compose exec -T database pg_isready \
+                      -U postgres \
+                      -d thecodecompany_social_media_db; then
+                      echo "PostgreSQL is ready!"
+                      break
+                    fi
+
+                    sleep 2
+                  done
+
+            # ---------------------------------------------------------
+            # Wait for Redis
+            # ---------------------------------------------------------
+            - name: Wait for Redis
+              run: |
+                  echo "Waiting for Redis..."
+
+                  for i in {1..30}; do
+                    if docker compose exec -T cache redis-cli ping | grep -q PONG; then
+                      echo "Redis is ready!"
+                      break
+                    fi
+
+                    sleep 2
+                  done
+
+            # ---------------------------------------------------------
+            # Check Java formatting
+            # ---------------------------------------------------------
+            - name: Spotless Check
+              run: mvn -B spotless:check
+
+            # ---------------------------------------------------------
+            # Run tests
+            # ---------------------------------------------------------
+            - name: Run Unit & Integration Tests
+              env:
+                  DB_HOST: localhost
+                  DB_PORT: 5432
+                  DB_NAME: thecodecompany_social_media_db
+                  DB_USERNAME: postgres
+                  DB_PASSWORD: postgres
+
+                  REDIS_HOST: localhost
+                  REDIS_PORT: 6379
+
+              run: |
+                  mvn -B clean test \
+                    -DforkCount=1 \
+                    -DreuseForks=false
+
+            # ---------------------------------------------------------
+            # Build JAR
+            # ---------------------------------------------------------
+            - name: Build JAR
+              run: |
+                  mvn -B package -DskipTests
+
+            # ---------------------------------------------------------
+            # Build and run complete Docker environment
+            # ---------------------------------------------------------
+            - name: Build and Run Docker containers
+              env:
+                  MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+                  MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+
+              run: |
+                  docker compose up --build -d
+
+                  echo "Waiting for application to start..."
+
+                  sleep 30
+
+                  docker compose ps
+
+            # ---------------------------------------------------------
+            # Show logs if something failed
+            # ---------------------------------------------------------
+            - name: Show application logs
+              if: failure()
+              run: |
+                  docker compose logs app
+
+            # ---------------------------------------------------------
+            # Check API
+            # ---------------------------------------------------------
+            - name: Check Spring Boot Endpoint
+              run: |
+                  echo "Testing /api/auth/test endpoint..."
+
+                  curl --fail \
+                    --retry 10 \
+                    --retry-delay 3 \
+                    --retry-connrefused \
+                    http://localhost:8000/api/auth/test
+
+                  echo
+                  echo "API is working!"
+
+            # ---------------------------------------------------------
+            # Upload test reports
+            # ---------------------------------------------------------
+            - name: Upload test reports
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: surefire-reports
+                  path: |
+                      **/target/surefire-reports/
+
+            # ---------------------------------------------------------
+            # Cleanup
+            # ---------------------------------------------------------
+            - name: Tear down containers
+              if: always()
+              run: |
+                  docker compose down -v

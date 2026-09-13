@@ -1,0 +1,62 @@
+services:
+
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+
+        ports:
+            - "8000:8000"
+
+        depends_on:
+            - database
+            - cache
+
+        environment:
+            SPRING_PROFILES_ACTIVE: docker
+
+            # Database
+            DB_HOST: database
+            DB_PORT: 5432
+            DB_NAME: thecodecompany_social_media_db
+            DB_USERNAME: postgres
+            DB_PASSWORD: postgres
+
+            # Redis
+            REDIS_HOST: cache
+            REDIS_PORT: 6379
+
+            # Mail
+            MAIL_HOST: smtp.gmail.com
+            MAIL_PORT: 587
+            MAIL_USERNAME: ${MAIL_USERNAME}
+            MAIL_PASSWORD: ${MAIL_PASSWORD}
+            MAIL_SMTP_AUTH: "true"
+            MAIL_SMTP_STARTTLS_ENABLE: "true"
+
+    database:
+        image: postgres:18.3
+
+        environment:
+            POSTGRES_DB: thecodecompany_social_media_db
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+
+        ports:
+            - "5432:5432"
+
+        volumes:
+            - postgres_data:/var/lib/postgresql
+
+    cache:
+        image: redis:7
+
+        ports:
+            - "6379:6379"
+
+        volumes:
+            - redis_data:/data
+
+volumes:
+    postgres_data:
+    redis_data:

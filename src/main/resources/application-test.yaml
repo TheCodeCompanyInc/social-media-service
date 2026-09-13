@@ -1,16 +1,11 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      password: ""
+    username: sa
+    password:
   cache:
-    type: redis
-    redis:
-      time-to-live: 600000
+    type: simple
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -28,5 +23,41 @@ spring:
         secret-key: custom-secret-key
         access-token-expiration: 604800000
         refresh-token-expiration: 2592000000
-        vehicle-token-expiration: 604800000
-        vehicle-refresh-token-expiration: 2592000000
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: placeholder-id
+            client-secret: placeholder-secret
+            scope:
+              - email
+              - profile
+            redirect-uri: http://localhost:8000/login/oauth2/code/google
+            client-name: Google
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+
+google:
+  android:
+    client-id: placeholder-android
+  ios:
+    client-id: placeholder-ios
+
+server:
+  port: 8080

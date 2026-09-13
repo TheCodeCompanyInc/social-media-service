@@ -1,26 +1,26 @@
 package com.thecodecompanyinc.social_media_service.service.auth;
 
-import com.thecodecompanyinc.social_media_service.dto.auth.LoginUserDto;
-import com.thecodecompanyinc.social_media_service.dto.auth.RegisterUserDto;
-import com.thecodecompanyinc.social_media_service.dto.auth.ResetPasswordDto;
-import com.thecodecompanyinc.social_media_service.dto.auth.VerifyCodeDto;
+import com.thecodecompanyinc.social_media_service.dto.auth.*;
 import com.thecodecompanyinc.social_media_service.entity.User;
 import com.thecodecompanyinc.social_media_service.response.LoginResponse;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 public interface AuthenticationService {
 
-    LoginResponse login(LoginUserDto loginUserDto);
+  LoginResponse login(LoginUserDto loginUserDto);
 
-    User signup(RegisterUserDto registerUserDto, String role);
+  LoginResponse googleLogin(GoogleIdTokenDto request) throws GeneralSecurityException, IOException;
 
-    LoginResponse refreshToken(String authHeader);
+  User signup(RegisterUserDto registerUserDto, String role);
 
-    boolean verifyUser(VerifyCodeDto verifyCodeDto);
+  LoginResponse refreshToken(String authHeader);
 
-    void regenerateOtp(String email);
+  boolean verifyUser(VerifyCodeDto verifyCodeDto);
 
-    boolean resetPassword(ResetPasswordDto resetPasswordDto);
+  void regenerateOtp(String email);
 
-    User getMe(String authHeader);
+  boolean resetPassword(ResetPasswordDto resetPasswordDto);
 
+  User getMe(String authHeader);
 }

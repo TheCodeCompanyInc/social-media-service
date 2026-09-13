@@ -1,37 +1,39 @@
 package com.thecodecompanyinc.social_media_service.service.user;
 
+import com.thecodecompanyinc.social_media_service.dto.auth.GoogleLoginDto;
+import com.thecodecompanyinc.social_media_service.dto.auth.UpdateUserDto;
+import com.thecodecompanyinc.social_media_service.entity.Role;
+import com.thecodecompanyinc.social_media_service.entity.User;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
-import com.thecodecompanyinc.social_media_service.dto.auth.UpdateUserDto;
-import com.thecodecompanyinc.social_media_service.entity.Role;
-import com.thecodecompanyinc.social_media_service.entity.User;
-
 public interface UserService {
-    User saveUser(User user);
+  User saveUser(User user);
 
-    Optional<User> getUser(String email);
+  User findOrCreateGoogleUser(GoogleLoginDto dto);
 
-    User getUserByJwt(String authHeader);
+  Optional<User> getUser(String email);
 
-    User getUserById(Long id);
+  User getUserByJwt(String authHeader);
 
-    User getUserByEmail(String email);
+  User getUserById(Long id);
 
-    List<User> getUsers();
+  User getUserByEmail(String email);
 
-    long countUsers();
+  List<User> getUsers();
 
-    long countUsersByRole(Role role);
+  long countUsers();
 
-    User updateUser(String authHeader, UpdateUserDto updateUserDto) throws ParseException;
+  long countUsersByRole(Role role);
 
-    void updateUserPhoto(String authHeader, String url);
+  User updateUser(String authHeader, UpdateUserDto updateUserDto) throws ParseException;
 
-    void updateFcmToken(String email, String fcmToken);
+  void updateUserPhoto(String authHeader, String url);
 
-    User updateUserRole(Long userId, Role newRole);
+  void updateFcmToken(String email, String fcmToken);
 
-    User updateEmailVerified(Long userId, boolean verified);
+  User updateUserRole(Long userId, Role newRole);
+
+  User updateEmailVerified(Long userId, boolean verified);
 }
