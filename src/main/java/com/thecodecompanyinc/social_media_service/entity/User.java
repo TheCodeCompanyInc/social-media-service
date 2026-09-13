@@ -62,7 +62,6 @@ public class User implements UserDetails {
   @Column(nullable = false)
   private Timestamp join_date;
 
-
   @JsonIgnore @Column private int code;
 
   @JsonIgnore @Column private Timestamp codeExpiredAt;
