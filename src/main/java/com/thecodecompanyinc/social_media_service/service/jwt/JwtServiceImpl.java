@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.thecodecompanyinc.social_media_service.entity.User;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -40,7 +42,7 @@ public class JwtServiceImpl implements JwtService {
         Date expiryDate = new Date(now.getTime() + accessTokenExpiration);
 
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
+                .setSubject(((User) userDetails).getEmail())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .claim("roles", userDetails.getAuthorities())
@@ -55,7 +57,7 @@ public class JwtServiceImpl implements JwtService {
         Date expiryDate = new Date(now.getTime() + refreshTokenExpiration);
 
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
+                .setSubject(((User) userDetails).getEmail())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .claim("roles", userDetails.getAuthorities())
