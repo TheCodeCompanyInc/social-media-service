@@ -21,6 +21,4 @@ public interface AuthenticationService {
 
     boolean resetPassword(ResetPasswordDto resetPasswordDto);
 
-    User getMe(String authHeader);
-
 }
