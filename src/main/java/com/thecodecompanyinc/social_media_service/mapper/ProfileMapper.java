@@ -1,7 +1,7 @@
 package com.thecodecompanyinc.social_media_service.mapper;
 
-import com.thecodecompanyinc.social_media_service.dto.profile.ProfileResponse;
-import com.thecodecompanyinc.social_media_service.dto.profile.ProfileUpdateRequest;
+import com.thecodecompanyinc.social_media_service.response.ProfileResponse;
+import com.thecodecompanyinc.social_media_service.dto.profile.ProfileUpdateRequestDto;
 import com.thecodecompanyinc.social_media_service.entity.User;
 import org.mapstruct.*;
 
@@ -12,5 +12,5 @@ public interface ProfileMapper {
     ProfileResponse toResponse(User user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void applyUpdate(ProfileUpdateRequest request, @MappingTarget User user);
+    void applyUpdate(ProfileUpdateRequestDto request, @MappingTarget User user);
 }

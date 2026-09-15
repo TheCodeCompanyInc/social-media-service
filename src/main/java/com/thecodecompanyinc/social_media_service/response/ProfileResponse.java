@@ -1,7 +1,9 @@
-package com.thecodecompanyinc.social_media_service.dto.profile;
+package com.thecodecompanyinc.social_media_service.response;
 
 import com.thecodecompanyinc.social_media_service.entity.OnlineStatus;
+import lombok.Data;
 
+@Data
 public class ProfileResponse {
     public Long userId;
     public String username;

@@ -1,7 +1,7 @@
 package com.thecodecompanyinc.social_media_service.service.profile;
 
-import com.thecodecompanyinc.social_media_service.dto.profile.ProfileResponse;
-import com.thecodecompanyinc.social_media_service.dto.profile.ProfileUpdateRequest;
+import com.thecodecompanyinc.social_media_service.dto.profile.ProfileUpdateRequestDto;
+import com.thecodecompanyinc.social_media_service.response.ProfileResponse;
 import com.thecodecompanyinc.social_media_service.entity.User;
 import com.thecodecompanyinc.social_media_service.exception.ResourceNotFoundException;
 import com.thecodecompanyinc.social_media_service.mapper.ProfileMapper;
@@ -27,9 +27,9 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional
-    public ProfileResponse updateProfile(Long userId, ProfileUpdateRequest profileUpdateRequest) {
+    public ProfileResponse updateProfile(Long userId, ProfileUpdateRequestDto profileUpdateRequestDto) {
         User user = findUserOrThrow(userId);
-        profileMapper.applyUpdate(profileUpdateRequest, user);
+        profileMapper.applyUpdate(profileUpdateRequestDto, user);
         userRepository.save(user);
         return profileMapper.toResponse(user);
     }

@@ -1,7 +1,7 @@
 package com.thecodecompanyinc.social_media_service.controller;
 
-import com.thecodecompanyinc.social_media_service.dto.profile.ProfileResponse;
-import com.thecodecompanyinc.social_media_service.dto.profile.ProfileUpdateRequest;
+import com.thecodecompanyinc.social_media_service.response.ProfileResponse;
+import com.thecodecompanyinc.social_media_service.dto.profile.ProfileUpdateRequestDto;
 import com.thecodecompanyinc.social_media_service.entity.User;
 import com.thecodecompanyinc.social_media_service.response.ApiResponse;
 import com.thecodecompanyinc.social_media_service.service.profile.ProfileService;
@@ -13,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @RestController
 @RequestMapping("/api/profiles")
@@ -34,7 +32,7 @@ public class ProfileController {
     @Operation(summary = "Update Current User Profile", description = "Update the profile of the authenticated user")
     public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(
             @AuthenticationPrincipal User user,
-            @RequestBody @Valid ProfileUpdateRequest profileUpdateRequest) {
-        return ResponseEntity.ok(ApiResponse.createSuccessResponse(profileService.updateProfile(user.getId(), profileUpdateRequest)));
+            @RequestBody @Valid ProfileUpdateRequestDto profileUpdateRequestDto) {
+        return ResponseEntity.ok(ApiResponse.createSuccessResponse(profileService.updateProfile(user.getId(), profileUpdateRequestDto)));
     }
 }

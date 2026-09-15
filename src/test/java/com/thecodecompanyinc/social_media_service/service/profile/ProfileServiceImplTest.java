@@ -1,7 +1,7 @@
 package com.thecodecompanyinc.social_media_service.service.profile;
 
-import com.thecodecompanyinc.social_media_service.dto.profile.ProfileResponse;
-import com.thecodecompanyinc.social_media_service.dto.profile.ProfileUpdateRequest;
+import com.thecodecompanyinc.social_media_service.response.ProfileResponse;
+import com.thecodecompanyinc.social_media_service.dto.profile.ProfileUpdateRequestDto;
 import com.thecodecompanyinc.social_media_service.entity.User;
 import com.thecodecompanyinc.social_media_service.exception.ResourceNotFoundException;
 import com.thecodecompanyinc.social_media_service.mapper.ProfileMapper;
@@ -69,7 +69,7 @@ class ProfileServiceImplTest {
 
     @Test
     void updateProfile_appliesChangesAndSaves_whenUserExists() {
-        ProfileUpdateRequest request = new ProfileUpdateRequest();
+        ProfileUpdateRequestDto request = new ProfileUpdateRequestDto();
         request.setUsername("newname");
 
         ProfileResponse expected = new ProfileResponse();
@@ -90,7 +90,7 @@ class ProfileServiceImplTest {
     void updateProfile_throwsUserNotFoundException_whenUserMissing() {
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> profileService.updateProfile(99L, new ProfileUpdateRequest()))
+        assertThatThrownBy(() -> profileService.updateProfile(99L, new ProfileUpdateRequestDto()))
                 .isInstanceOf(ResourceNotFoundException.class);
 
         verify(userRepository, never()).save(any());

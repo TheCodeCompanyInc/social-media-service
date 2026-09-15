@@ -1,7 +1,7 @@
 package com.thecodecompanyinc.social_media_service.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thecodecompanyinc.social_media_service.dto.profile.ProfileUpdateRequest;
+import com.thecodecompanyinc.social_media_service.dto.profile.ProfileUpdateRequestDto;
 import com.thecodecompanyinc.social_media_service.entity.OnlineStatus;
 import com.thecodecompanyinc.social_media_service.entity.Role;
 import com.thecodecompanyinc.social_media_service.entity.User;
@@ -108,7 +108,7 @@ class ProfileControllerIT {
     @Test
     @DisplayName("PUT /api/profiles - Success")
     void updateProfile_Success() throws Exception {
-        ProfileUpdateRequest updateRequest = new ProfileUpdateRequest();
+        ProfileUpdateRequestDto updateRequest = new ProfileUpdateRequestDto();
         updateRequest.setFirstName("Updated");
         updateRequest.setLastName("Name");
         updateRequest.setBio("Updated bio");
@@ -127,7 +127,7 @@ class ProfileControllerIT {
     @Test
     @DisplayName("PUT /api/profiles - Validation Failure")
     void updateProfile_ValidationFailure() throws Exception {
-        ProfileUpdateRequest updateRequest = new ProfileUpdateRequest();
+        ProfileUpdateRequestDto updateRequest = new ProfileUpdateRequestDto();
         updateRequest.setUsername("u"); // Too short
 
         mockMvc.perform(put("/api/profiles")
@@ -140,7 +140,7 @@ class ProfileControllerIT {
     @Test
     @DisplayName("PUT /api/profiles - Unauthorized")
     void updateProfile_Unauthorized() throws Exception {
-        ProfileUpdateRequest updateRequest = new ProfileUpdateRequest();
+        ProfileUpdateRequestDto updateRequest = new ProfileUpdateRequestDto();
         updateRequest.setFirstName("Updated");
 
         mockMvc.perform(put("/api/profiles")
