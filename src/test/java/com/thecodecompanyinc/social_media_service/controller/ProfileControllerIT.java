@@ -106,6 +106,26 @@ class ProfileControllerIT {
     }
 
     @Test
+    @DisplayName("GET /api/profiles/me - Success")
+    void getCurrentProfile_Success() throws Exception {
+        mockMvc.perform(get("/api/profiles/me")
+                        .header("Authorization", accessToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.data.userId", is(testUser.getId().intValue())))
+                .andExpect(jsonPath("$.data.username", is(testUser.getUsername())))
+                .andExpect(jsonPath("$.data.firstName", is(testUser.getFirstName())))
+                .andExpect(jsonPath("$.data.lastName", is(testUser.getLastName())));
+    }
+
+    @Test
+    @DisplayName("GET /api/profiles/me - Unauthorized")
+    void getCurrentProfile_Unauthorized() throws Exception {
+        mockMvc.perform(get("/api/profiles/me"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     @DisplayName("PUT /api/profiles - Success")
     void updateProfile_Success() throws Exception {
         ProfileUpdateRequestDto updateRequest = new ProfileUpdateRequestDto();

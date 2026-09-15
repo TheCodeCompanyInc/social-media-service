@@ -28,6 +28,12 @@ public class ProfileController {
         return ResponseEntity.ok(ApiResponse.createSuccessResponse(profileService.getProfileById(id)));
     }
 
+    @GetMapping("/me")
+    @Operation(summary = "Get Current User Profile", description = "Retrieve the profile of the authenticated user")
+    public ResponseEntity<ApiResponse<ProfileResponse>> getCurrentProfile(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(ApiResponse.createSuccessResponse(profileService.getCurrentProfile(user)));
+    }
+
     @PutMapping
     @Operation(summary = "Update Current User Profile", description = "Update the profile of the authenticated user")
     public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(

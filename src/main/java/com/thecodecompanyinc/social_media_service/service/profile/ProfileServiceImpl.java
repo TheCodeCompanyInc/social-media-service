@@ -26,6 +26,11 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    public ProfileResponse getCurrentProfile(User user) {
+        return profileMapper.toResponse(user);
+    }
+
+    @Override
     @Transactional
     public ProfileResponse updateProfile(Long userId, ProfileUpdateRequestDto profileUpdateRequestDto) {
         User user = findUserOrThrow(userId);
