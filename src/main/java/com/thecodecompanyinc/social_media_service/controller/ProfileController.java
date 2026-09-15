@@ -2,6 +2,8 @@ package com.thecodecompanyinc.social_media_service.controller;
 
 import com.thecodecompanyinc.social_media_service.dto.profile.ProfileResponse;
 import com.thecodecompanyinc.social_media_service.dto.profile.ProfileUpdateRequest;
+import com.thecodecompanyinc.social_media_service.entity.User;
+import com.thecodecompanyinc.social_media_service.response.ApiResponse;
 import com.thecodecompanyinc.social_media_service.service.profile.ProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,7 +11,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @RestController
 @RequestMapping("/api/profiles")
@@ -21,15 +26,15 @@ public class ProfileController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get Profile by ID", description = "Retrieve a profile by its ID")
-    public ResponseEntity<ProfileResponse> getProfileById(@PathVariable Long id) {
-        return ResponseEntity.ok(profileService.getProfileById(id));
+    public ResponseEntity<ApiResponse<ProfileResponse>> getProfileById(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.createSuccessResponse(profileService.getProfileById(id)));
     }
 
-    @PutMapping("/{id}")
-    @Operation(summary = "Update Profile by ID", description = "Update a profile by its ID")
-    public ResponseEntity<ProfileResponse> updateProfile(
-            @PathVariable Long id,
+    @PutMapping
+    @Operation(summary = "Update Current User Profile", description = "Update the profile of the authenticated user")
+    public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(
+            @AuthenticationPrincipal User user,
             @RequestBody @Valid ProfileUpdateRequest profileUpdateRequest) {
-        return ResponseEntity.ok(profileService.updateProfile(id, profileUpdateRequest));
+        return ResponseEntity.ok(ApiResponse.createSuccessResponse(profileService.updateProfile(user.getId(), profileUpdateRequest)));
     }
 }

@@ -83,10 +83,11 @@ class ProfileControllerIT {
         mockMvc.perform(get("/api/profiles/{id}", testUser.getId())
                         .header("Authorization", accessToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userId", is(testUser.getId().intValue())))
-                .andExpect(jsonPath("$.firstName", is(testUser.getFirstName())))
-                .andExpect(jsonPath("$.lastName", is(testUser.getLastName())))
-                .andExpect(jsonPath("$.bio", is(testUser.getBio())));
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.data.userId", is(testUser.getId().intValue())))
+                .andExpect(jsonPath("$.data.firstName", is(testUser.getFirstName())))
+                .andExpect(jsonPath("$.data.lastName", is(testUser.getLastName())))
+                .andExpect(jsonPath("$.data.bio", is(testUser.getBio())));
     }
 
     @Test
@@ -105,30 +106,31 @@ class ProfileControllerIT {
     }
 
     @Test
-    @DisplayName("PUT /api/profiles/{id} - Success")
+    @DisplayName("PUT /api/profiles - Success")
     void updateProfile_Success() throws Exception {
         ProfileUpdateRequest updateRequest = new ProfileUpdateRequest();
         updateRequest.setFirstName("Updated");
         updateRequest.setLastName("Name");
         updateRequest.setBio("Updated bio");
 
-        mockMvc.perform(put("/api/profiles/{id}", testUser.getId())
+        mockMvc.perform(put("/api/profiles")
                         .header("Authorization", accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName", is("Updated")))
-                .andExpect(jsonPath("$.lastName", is("Name")))
-                .andExpect(jsonPath("$.bio", is("Updated bio")));
+                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(jsonPath("$.data.firstName", is("Updated")))
+                .andExpect(jsonPath("$.data.lastName", is("Name")))
+                .andExpect(jsonPath("$.data.bio", is("Updated bio")));
     }
 
     @Test
-    @DisplayName("PUT /api/profiles/{id} - Validation Failure")
+    @DisplayName("PUT /api/profiles - Validation Failure")
     void updateProfile_ValidationFailure() throws Exception {
         ProfileUpdateRequest updateRequest = new ProfileUpdateRequest();
         updateRequest.setUsername("u"); // Too short
 
-        mockMvc.perform(put("/api/profiles/{id}", testUser.getId())
+        mockMvc.perform(put("/api/profiles")
                         .header("Authorization", accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
@@ -136,12 +138,12 @@ class ProfileControllerIT {
     }
 
     @Test
-    @DisplayName("PUT /api/profiles/{id} - Unauthorized")
+    @DisplayName("PUT /api/profiles - Unauthorized")
     void updateProfile_Unauthorized() throws Exception {
         ProfileUpdateRequest updateRequest = new ProfileUpdateRequest();
         updateRequest.setFirstName("Updated");
 
-        mockMvc.perform(put("/api/profiles/{id}", testUser.getId())
+        mockMvc.perform(put("/api/profiles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isUnauthorized());
