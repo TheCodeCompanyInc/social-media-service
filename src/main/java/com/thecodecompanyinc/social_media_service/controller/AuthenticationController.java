@@ -151,13 +151,6 @@ public class AuthenticationController {
         }
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<ApiResponse<User>> getMe(
-            @Parameter(description = "Bearer access token", required = true) @RequestHeader("Authorization") String authorizationHeader) {
-        User user = authenticationService.getMe(authorizationHeader);
-        return ResponseEntity.ok(createSuccessResponse(user));
-    }
-
     @Operation(summary = "Health check", description = "Simple endpoint to verify the authentication service is running")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Service is healthy")
     @GetMapping("/test")

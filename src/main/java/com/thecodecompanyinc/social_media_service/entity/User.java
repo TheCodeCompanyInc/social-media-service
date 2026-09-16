@@ -37,6 +37,9 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String username;
+
     @Column(unique = true, nullable = false)
     private String email;
 
@@ -55,6 +58,14 @@ public class User implements UserDetails {
 
     @Column(columnDefinition = "TEXT")
     private String imageUrl;
+
+    @Column(columnDefinition = "TEXT")
+    private String bio;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private OnlineStatus onlineStatus = OnlineStatus.OFFLINE;
 
     @Column
     private Date dob;
@@ -83,12 +94,6 @@ public class User implements UserDetails {
     @JsonIgnore
     @Column
     private String firebaseToken;
-
-    @Override
-    @JsonIgnore
-    public String getUsername() {
-        return email;
-    }
 
     @Override
     @JsonIgnore

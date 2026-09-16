@@ -13,6 +13,11 @@ public class RegisterUserDto {
     @Email(message = "Invalid email format")
     private String email;
 
+    @NotBlank(message = "Username cannot be blank")
+    @Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9_.]+$", message = "Username can only contain letters, numbers, underscores and dots")
+    private String username;
+
     @NotBlank(message = "Password cannot be blank")
     @Size(min = 8, max = 64, message = "Password must be between 8 and 64 characters")
     private String password;

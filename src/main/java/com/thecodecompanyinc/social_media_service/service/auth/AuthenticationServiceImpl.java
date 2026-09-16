@@ -216,12 +216,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return false;
     }
 
-    @Override
-    public User getMe(String authHeader) {
-        log.info("Getting user details from token");
-        return userService.getUserByJwt(authHeader);
-    }
-
     private boolean isCodeValid(Timestamp codeExpiredAt) {
         log.debug("Checking if code is valid, expiration: {}", codeExpiredAt);
         try {

@@ -49,6 +49,7 @@ class UserRepositoryTest {
         user1 =
                 User.builder()
                         .email("user1@gmail.com")
+                        .username("user1")
                         .phoneNumber("+201010149602")
                         .passwordHash("user1passwordhash")
                         .join_date(new Timestamp(now.getTime()))
@@ -63,6 +64,7 @@ class UserRepositoryTest {
         user2 =
                 User.builder()
                         .email("user2@gmail.com")
+                        .username("user2")
                         .phoneNumber("+201110149602")
                         .passwordHash("user2passwordhash")
                         .join_date(new Timestamp(now.getTime()))
