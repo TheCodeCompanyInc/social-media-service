@@ -4,12 +4,15 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
+import com.thecodecompanyinc.social_media_service.dto.auth.GoogleLoginDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.UpdateUserDto;
 import com.thecodecompanyinc.social_media_service.entity.Role;
 import com.thecodecompanyinc.social_media_service.entity.User;
 
 public interface UserService {
     User saveUser(User user);
+
+    User findOrCreateGoogleUser(GoogleLoginDto dto);
 
     Optional<User> getUser(String email);
 

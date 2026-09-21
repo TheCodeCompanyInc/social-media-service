@@ -5,6 +5,9 @@ import static com.thecodecompanyinc.social_media_service.response.ApiResponse.cr
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.thecodecompanyinc.social_media_service.dto.auth.GoogleIdTokenDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.LoginUserDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.RegenerateCodeDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.RegisterUserDto;
@@ -111,6 +115,23 @@ public class AuthenticationController {
     public ResponseEntity<ApiResponse<LoginResponse>> login(
             @Valid @RequestBody LoginUserDto loginUserDto) {
         LoginResponse loginResponse = authenticationService.login(loginUserDto);
+        return ResponseEntity.ok(createSuccessResponse(loginResponse));
+    }
+
+    @Operation(summary = "Google OAuth login", description = "Authenticates a user using Google ID token from Flutter Google Sign-In."
+            + " Creates a new user if one doesn't exist.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Google login successful, tokens returned"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid Google ID token"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Google token verification failed")
+    })
+    @PostMapping("/google")
+    public ResponseEntity<ApiResponse<LoginResponse>> googleLogin(
+            @Valid @RequestBody GoogleIdTokenDto googleIdTokenDto)
+            throws GeneralSecurityException, IOException {
+        log.info("Google login request received");
+        LoginResponse loginResponse = authenticationService.googleLogin(googleIdTokenDto);
+        log.info("Google login successful");
         return ResponseEntity.ok(createSuccessResponse(loginResponse));
     }
 
