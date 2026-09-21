@@ -10,15 +10,15 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface LoginResponseMapper {
 
-  @Mapping(target = "accessToken", source = "accessToken")
-  @Mapping(target = "refreshToken", source = "refreshToken")
-  @Mapping(target = "user", source = "user")
-  @Mapping(
-      target = "accessTokenExpiresIn",
-      expression = "java(jwtService.extractExpiration(accessToken))")
-  @Mapping(
-      target = "refreshTokenExpiresIn",
-      expression = "java(jwtService.extractExpiration(refreshToken))")
-  LoginResponse toLoginResponse(
-      String accessToken, String refreshToken, User user, @Context JwtService jwtService);
+    @Mapping(target = "accessToken", source = "accessToken")
+    @Mapping(target = "refreshToken", source = "refreshToken")
+    @Mapping(target = "user", source = "user")
+    @Mapping(
+            target = "accessTokenExpiresIn",
+            expression = "java(jwtService.extractExpiration(accessToken))")
+    @Mapping(
+            target = "refreshTokenExpiresIn",
+            expression = "java(jwtService.extractExpiration(refreshToken))")
+    LoginResponse toLoginResponse(
+            String accessToken, String refreshToken, User user, @Context JwtService jwtService);
 }

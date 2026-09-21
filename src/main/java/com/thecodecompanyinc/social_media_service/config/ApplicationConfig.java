@@ -25,78 +25,80 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Slf4j
 public class ApplicationConfig {
 
-  @Value("${spring.security.oauth2.client.registration.google.client-id}")
-  private String webClientId;
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
+    private String webClientId;
 
-  @Value("${google.android.client-id}")
-  private String androidClientId;
+    @Value("${google.android.client-id}")
+    private String androidClientId;
 
-  @Value("${google.ios.client-id}")
-  private String iosClientId;
+    @Value("${google.ios.client-id}")
+    private String iosClientId;
 
-  private final UserService userService;
+    private final UserService userService;
 
-  @Bean
-  public ObjectMapper objectMapper() {
-    return new ObjectMapper();
-  }
-
-  @Bean
-  public AuthenticationManager authenticationManager(
-      AuthenticationConfiguration authenticationConfiguration) throws Exception {
-    AuthenticationManager defaultManager = authenticationConfiguration.getAuthenticationManager();
-
-    return new ProviderManager(List.of(authenticationProvider()), defaultManager);
-  }
-
-  @Bean
-  public UserDetailsService userDetailsService() {
-    return email ->
-        userService
-            .getUser(email)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
-  }
-
-  @Bean
-  public BCryptPasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
-
-  @Bean
-  public AuthenticationProvider authenticationProvider() {
-    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService());
-    authProvider.setPasswordEncoder(passwordEncoder());
-
-    return authProvider;
-  }
-
-  /**
-   * Builds the GoogleIdTokenVerifier with all possible client IDs (Web, Android, iOS) to support
-   * tokens from different platforms.
-   */
-  @Bean
-  public GoogleIdTokenVerifier buildVerifier() {
-    log.debug("Building Google ID token verifier");
-
-    // Build list of valid client IDs (web, android, ios)
-    java.util.List<String> clientIds = new java.util.ArrayList<>();
-    clientIds.add(webClientId);
-
-    if (androidClientId != null && !androidClientId.isEmpty()) {
-      clientIds.add(androidClientId);
-      log.debug("Android client ID configured");
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 
-    if (iosClientId != null && !iosClientId.isEmpty()) {
-      clientIds.add(iosClientId);
-      log.debug("iOS client ID configured");
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        AuthenticationManager defaultManager =
+                authenticationConfiguration.getAuthenticationManager();
+
+        return new ProviderManager(List.of(authenticationProvider()), defaultManager);
     }
 
-    log.debug("Verifier configured with {} client ID(s)", clientIds.size());
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return email ->
+                userService
+                        .getUser(email)
+                        .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
+    }
 
-    return new GoogleIdTokenVerifier.Builder(
-            new NetHttpTransport(), GsonFactory.getDefaultInstance())
-        .setAudience(clientIds)
-        .build();
-  }
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider =
+                new DaoAuthenticationProvider(userDetailsService());
+        authProvider.setPasswordEncoder(passwordEncoder());
+
+        return authProvider;
+    }
+
+    /**
+     * Builds the GoogleIdTokenVerifier with all possible client IDs (Web, Android, iOS) to support
+     * tokens from different platforms.
+     */
+    @Bean
+    public GoogleIdTokenVerifier buildVerifier() {
+        log.debug("Building Google ID token verifier");
+
+        // Build list of valid client IDs (web, android, ios)
+        java.util.List<String> clientIds = new java.util.ArrayList<>();
+        clientIds.add(webClientId);
+
+        if (androidClientId != null && !androidClientId.isEmpty()) {
+            clientIds.add(androidClientId);
+            log.debug("Android client ID configured");
+        }
+
+        if (iosClientId != null && !iosClientId.isEmpty()) {
+            clientIds.add(iosClientId);
+            log.debug("iOS client ID configured");
+        }
+
+        log.debug("Verifier configured with {} client ID(s)", clientIds.size());
+
+        return new GoogleIdTokenVerifier.Builder(
+                        new NetHttpTransport(), GsonFactory.getDefaultInstance())
+                .setAudience(clientIds)
+                .build();
+    }
 }

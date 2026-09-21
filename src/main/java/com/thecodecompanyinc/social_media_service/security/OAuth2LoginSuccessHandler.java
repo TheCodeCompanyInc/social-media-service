@@ -21,45 +21,45 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-  private final UserService userService;
-  private final JwtService jwtService;
-  private final ObjectMapper objectMapper;
+    private final UserService userService;
+    private final JwtService jwtService;
+    private final ObjectMapper objectMapper;
 
-  @Override
-  public void onAuthenticationSuccess(
-      @NonNull HttpServletRequest request,
-      HttpServletResponse response,
-      org.springframework.security.core.Authentication authentication)
-      throws IOException, ServletException {
+    @Override
+    public void onAuthenticationSuccess(
+            @NonNull HttpServletRequest request,
+            HttpServletResponse response,
+            org.springframework.security.core.Authentication authentication)
+            throws IOException, ServletException {
 
-    OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-    GoogleLoginDto googleLoginDto =
-        new GoogleLoginDto(
-            oAuth2User.getAttribute("email"),
-            oAuth2User.getAttribute("name"),
-            oAuth2User.getAttribute("given_name"),
-            oAuth2User.getAttribute("family_name"));
+        GoogleLoginDto googleLoginDto =
+                new GoogleLoginDto(
+                        oAuth2User.getAttribute("email"),
+                        oAuth2User.getAttribute("name"),
+                        oAuth2User.getAttribute("given_name"),
+                        oAuth2User.getAttribute("family_name"));
 
-    User user = userService.findOrCreateGoogleUser(googleLoginDto);
+        User user = userService.findOrCreateGoogleUser(googleLoginDto);
 
-    String accessToken = jwtService.generateAccessToken(user);
-    String refreshToken = jwtService.generateRefreshToken(user);
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
 
-    LoginResponse loginResponse = new LoginResponse();
-    loginResponse.setAccessToken(accessToken);
-    loginResponse.setRefreshToken(refreshToken);
-    loginResponse.setAccessTokenExpiresIn(jwtService.extractExpiration(accessToken));
-    loginResponse.setRefreshTokenExpiresIn(jwtService.extractExpiration(refreshToken));
-    loginResponse.setUser(user);
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setAccessToken(accessToken);
+        loginResponse.setRefreshToken(refreshToken);
+        loginResponse.setAccessTokenExpiresIn(jwtService.extractExpiration(accessToken));
+        loginResponse.setRefreshTokenExpiresIn(jwtService.extractExpiration(refreshToken));
+        loginResponse.setUser(user);
 
-    response.setStatus(HttpServletResponse.SC_OK);
-    response.setContentType("application/json");
-    response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-    ApiResponse<Object> apiResponse = ApiResponse.createSuccessResponse(loginResponse);
+        ApiResponse<Object> apiResponse = ApiResponse.createSuccessResponse(loginResponse);
 
-    response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
-    response.getWriter().flush();
-  }
+        response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
+        response.getWriter().flush();
+    }
 }

@@ -5,5 +5,5 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 public interface GoogleTokenService {
-  GoogleLoginDto verifyIdToken(String idTokenString) throws GeneralSecurityException, IOException;
+    GoogleLoginDto verifyIdToken(String idTokenString) throws GeneralSecurityException, IOException;
 }

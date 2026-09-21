@@ -9,31 +9,31 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-  User saveUser(User user);
+    User saveUser(User user);
 
-  User findOrCreateGoogleUser(GoogleLoginDto dto);
+    User findOrCreateGoogleUser(GoogleLoginDto dto);
 
-  Optional<User> getUser(String email);
+    Optional<User> getUser(String email);
 
-  User getUserByJwt(String authHeader);
+    User getUserByJwt(String authHeader);
 
-  User getUserById(Long id);
+    User getUserById(Long id);
 
-  User getUserByEmail(String email);
+    User getUserByEmail(String email);
 
-  List<User> getUsers();
+    List<User> getUsers();
 
-  long countUsers();
+    long countUsers();
 
-  long countUsersByRole(Role role);
+    long countUsersByRole(Role role);
 
-  User updateUser(String authHeader, UpdateUserDto updateUserDto) throws ParseException;
+    User updateUser(String authHeader, UpdateUserDto updateUserDto) throws ParseException;
 
-  void updateUserPhoto(String authHeader, String url);
+    void updateUserPhoto(String authHeader, String url);
 
-  void updateFcmToken(String email, String fcmToken);
+    void updateFcmToken(String email, String fcmToken);
 
-  User updateUserRole(Long userId, Role newRole);
+    User updateUserRole(Long userId, Role newRole);
 
-  User updateEmailVerified(Long userId, boolean verified);
+    User updateEmailVerified(Long userId, boolean verified);
 }
