@@ -110,10 +110,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public User signup(RegisterUserDto registerUserDto, String role) {
         log.info("Signup attempt for email: {} with role: {}", registerUserDto.getEmail(), role);
         User user = userMapper.toUser(registerUserDto, passwordEncoder);
-        if (role.equals("ADMIN")) {
-            user.setRole(Role.ADMIN);
-            log.debug("Setting role to ADMIN for email: {}", registerUserDto.getEmail());
-        }
+        Role signupRole = switch (role) {
+            case "ADMIN" -> Role.ADMIN;
+            case "CLIENT" -> Role.CLIENT;
+            default -> throw new IllegalArgumentException("Unsupported signup role: " + role);
+        };
+        user.setRole(signupRole);
+        log.debug("Setting role to {} for email: {}", signupRole, registerUserDto.getEmail());
 
         String code = Integer.toString(user.getCode());
         User createdUser = userService.saveUser(user);
