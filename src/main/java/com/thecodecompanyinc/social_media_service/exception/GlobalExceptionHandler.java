@@ -78,7 +78,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ApiResponse<MessageResponse>> handleHttpMessageNotReadable(
             HttpMessageNotReadableException ex) {
-        String errorMessage = "Required request body is missing: " + ex.getMessage();
+        String errorMessage = "Invalid request body";
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(createFailureResponse(errorMessage));
     }
@@ -217,7 +217,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<MessageResponse>> handleGenericException(Exception ex) {
         log.error("Unexpected error: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(createFailureResponse("Internal server error: " + ex.getMessage()));
+                .body(createFailureResponse("Internal server error"));
     }
 
     @ExceptionHandler(DuplicateKeyException.class)

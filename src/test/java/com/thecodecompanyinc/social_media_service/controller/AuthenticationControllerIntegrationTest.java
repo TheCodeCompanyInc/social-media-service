@@ -565,7 +565,7 @@ class AuthenticationControllerIntegrationTest {
 
     // CONCURRENT OPERATIONS
     @Test
-    @DisplayName("Should handle multiple concurrent signups")
+    @DisplayName("Should handle multiple signups")
     void shouldHandleMultipleConcurrentSignups() throws Exception {
         for (int i = 0; i < 5; i++) {
             RegisterUserDto dto = new RegisterUserDto();
