@@ -1,5 +1,7 @@
 package com.thecodecompanyinc.social_media_service.service.auth;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Random;
@@ -11,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.thecodecompanyinc.social_media_service.dto.auth.GoogleIdTokenDto;
+import com.thecodecompanyinc.social_media_service.dto.auth.GoogleLoginDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.LoginUserDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.RegisterUserDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.ResetPasswordDto;
@@ -21,6 +25,7 @@ import com.thecodecompanyinc.social_media_service.exception.ResourceNotFoundExce
 import com.thecodecompanyinc.social_media_service.mapper.LoginResponseMapper;
 import com.thecodecompanyinc.social_media_service.mapper.UserMapper;
 import com.thecodecompanyinc.social_media_service.response.LoginResponse;
+import com.thecodecompanyinc.social_media_service.service.google.GoogleTokenService;
 import com.thecodecompanyinc.social_media_service.service.jwt.JwtService;
 import com.thecodecompanyinc.social_media_service.service.mail.MailSenderService;
 import com.thecodecompanyinc.social_media_service.service.user.UserService;
@@ -40,6 +45,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
     private final LoginResponseMapper loginResponseMapper;
+    private final GoogleTokenService googleTokenService;
     private static final long ONE_DAY_MS = 86_400_000L;
 
     @Override
@@ -53,6 +59,34 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         log.info("Login successful for email: {}", loginUserDto.getEmail());
         return loginResponseMapper.toLoginResponse(accessToken, refreshToken, authenticatedUser, jwtService);
+    }
+
+    @Override
+    @Transactional
+    public LoginResponse googleLogin(GoogleIdTokenDto googleIdTokenDto)
+            throws GeneralSecurityException, IOException {
+        log.info("Google login attempt");
+
+        // Verify the Google ID token and extract user information
+        GoogleLoginDto googleUserInfo = googleTokenService.verifyIdToken(googleIdTokenDto.getIdToken());
+        log.info("Google token verified for email: {}", googleUserInfo.getEmail());
+
+        // Find existing user or create a new one
+        User user = userService.findOrCreateGoogleUser(googleUserInfo);
+        log.info("User retrieved/created for Google login: {}", user.getEmail());
+
+        // Update FCM token if provided
+        if (googleIdTokenDto.getFcmToken() != null && !googleIdTokenDto.getFcmToken().isEmpty()) {
+            userService.updateFcmToken(user.getEmail(), googleIdTokenDto.getFcmToken());
+            log.debug("FCM token updated for user: {}", user.getEmail());
+        }
+
+        // Generate JWT tokens
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+
+        log.info("Google login successful for email: {}", user.getEmail());
+        return createLoginResponse(accessToken, refreshToken, user);
     }
 
     private User authenticate(LoginUserDto loginUserDto) {
@@ -76,10 +110,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public User signup(RegisterUserDto registerUserDto, String role) {
         log.info("Signup attempt for email: {} with role: {}", registerUserDto.getEmail(), role);
         User user = userMapper.toUser(registerUserDto, passwordEncoder);
-        if (role.equals("ADMIN")) {
-            user.setRole(Role.ADMIN);
-            log.debug("Setting role to ADMIN for email: {}", registerUserDto.getEmail());
-        }
+        Role signupRole = switch (role) {
+            case "ADMIN" -> Role.ADMIN;
+            case "CLIENT" -> Role.CLIENT;
+            default -> throw new IllegalArgumentException("Unsupported signup role: " + role);
+        };
+        user.setRole(signupRole);
+        log.debug("Setting role to {} for email: {}", signupRole, registerUserDto.getEmail());
 
         String code = Integer.toString(user.getCode());
         User createdUser = userService.saveUser(user);
@@ -136,6 +173,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.debug("New access token generated for email: {}", email);
 
         return loginResponseMapper.toLoginResponse(accessToken, refreshToken, user, jwtService);
+    }
+
+    private LoginResponse createLoginResponse(String accessToken, String refreshToken, User user) {
+        log.debug("Creating login response for user id: {}", user.getId());
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setAccessToken(accessToken);
+        loginResponse.setRefreshToken(refreshToken);
+        loginResponse.setAccessTokenExpiresIn(jwtService.extractExpiration(accessToken));
+        loginResponse.setRefreshTokenExpiresIn(jwtService.extractExpiration(refreshToken));
+        loginResponse.setUser(user);
+
+        return loginResponse;
     }
 
     @Override

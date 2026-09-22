@@ -22,8 +22,6 @@ spring:
         jdbc:
           time_zone: UTC
     database: h2
-  mail:
-    host: localhost
   application:
     security:
       jwt:
@@ -32,3 +30,37 @@ spring:
         refresh-token-expiration: 2592000000
         vehicle-token-expiration: 604800000
         vehicle-refresh-token-expiration: 2592000000
+    
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: test@example.com
+    password: test-password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: test-client-id
+            client-secret: test-client-secret
+            scope:
+              - email
+              - profile
+            redirect-uri: "http://localhost:8080/login/oauth2/code/google"
+            client-name: Google
+
+server:
+  address: 0.0.0.0
+  port: ${SERVER_PORT:8080}
+
+google:
+  android:
+    client-id: google-client-id-for-android.apps.googleusercontent.com
+  ios:
+    client-id: google-client-id-for-ios.apps.googleusercontent.com
