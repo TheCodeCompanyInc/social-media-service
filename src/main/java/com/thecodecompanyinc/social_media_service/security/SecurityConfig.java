@@ -26,6 +26,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -43,7 +44,8 @@ public class SecurityConfig {
                 .exceptionHandling(
                         exception -> exception
                                 .accessDeniedHandler(customAccessDeniedHandler)
-                                .authenticationEntryPoint(customAuthenticationEntryPoint));
+                                .authenticationEntryPoint(customAuthenticationEntryPoint))
+                .oauth2Login(oauth -> oauth.successHandler(oAuth2LoginSuccessHandler));
 
         return http.build();
     }

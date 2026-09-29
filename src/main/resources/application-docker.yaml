@@ -32,3 +32,47 @@ spring:
         refresh-token-expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:2592000000}
         vehicle-token-expiration: ${JWT_VEHICLE_TOKEN_EXPIRATION:604800000}
         vehicle-refresh-token-expiration: ${JWT_VEHICLE_REFRESH_TOKEN_EXPIRATION:2592000000}
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS_ENABLE:true}
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH2_GOOGLE_CLIENT_ID:placeholder-id}
+            client-secret: ${OAUTH2_GOOGLE_CLIENT_SECRET:placeholder-secret}
+            scope:
+              - email
+              - profile
+            redirect-uri: ${OAUTH2_GOOGLE_REDIRECT_URI:http://localhost:8080/login/oauth2/code/google}
+            client-name: Google
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+management:
+  health:
+    mail:
+      enabled: false
+
+server:
+  address: 0.0.0.0
+  port: ${SERVER_PORT:8080}
+
+
+google:
+  android:
+    client-id: ${OAUTH2_GOOGLE_ANDROID_CLIENT_ID:placeholder-android}
+  ios:
+    client-id: ${OAUTH2_GOOGLE_IOS_CLIENT_ID:placeholder-ios}

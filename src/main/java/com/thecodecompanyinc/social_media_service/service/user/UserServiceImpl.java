@@ -1,14 +1,17 @@
 package com.thecodecompanyinc.social_media_service.service.user;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.thecodecompanyinc.social_media_service.dto.auth.GoogleLoginDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.UpdateUserDto;
 import com.thecodecompanyinc.social_media_service.entity.Role;
 import com.thecodecompanyinc.social_media_service.entity.User;
@@ -40,6 +43,49 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
         log.info("User saved successfully with id: {}", savedUser.getId());
         return savedUser;
+    }
+
+    @Override
+    public User findOrCreateGoogleUser(GoogleLoginDto dto) {
+        log.info("Finding or creating Google user with email: {}", dto.getEmail());
+
+        Optional<User> existingUser = getUser(dto.getEmail());
+
+        if (existingUser.isPresent()) {
+            return existingUser.get();
+        }
+
+        try {
+            log.info("Creating new Google user with email: {}", dto.getEmail());
+
+            User newUser = new User();
+            newUser.setEmail(dto.getEmail());
+            newUser.setUsername(dto.getName());
+            newUser.setFirstName(
+                    dto.getGivenName() != null
+                            ? dto.getGivenName()
+                            : dto.getName());
+            newUser.setLastName(
+                    dto.getFamilyName() != null
+                            ? dto.getFamilyName()
+                            : "");
+            newUser.setRole(Role.CLIENT);
+            newUser.setPasswordHash("N/A");
+            newUser.setPhoneNumber("N/A");
+            newUser.setJoin_date(new Timestamp(System.currentTimeMillis()));
+            newUser.setEmailVerified(true);
+
+            return saveUser(newUser);
+
+        } catch (DataIntegrityViolationException e) {
+            // Another concurrent request created this user.
+            log.info(
+                    "Google user with email {} was created concurrently; loading existing user",
+                    dto.getEmail());
+
+            return getUser(dto.getEmail())
+                    .orElseThrow(() -> e);
+        }
     }
 
     @Override
