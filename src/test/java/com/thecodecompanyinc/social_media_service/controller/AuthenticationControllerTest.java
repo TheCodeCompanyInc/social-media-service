@@ -16,22 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.security.GeneralSecurityException;
-import java.util.Date;
-import java.util.NoSuchElementException;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thecodecompanyinc.social_media_service.dto.auth.GoogleIdTokenDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.LoginUserDto;
@@ -44,25 +28,34 @@ import com.thecodecompanyinc.social_media_service.entity.User;
 import com.thecodecompanyinc.social_media_service.exception.GlobalExceptionHandler;
 import com.thecodecompanyinc.social_media_service.response.LoginResponse;
 import com.thecodecompanyinc.social_media_service.service.auth.AuthenticationService;
-
 import io.jsonwebtoken.ExpiredJwtException;
+import java.security.GeneralSecurityException;
+import java.util.Date;
+import java.util.NoSuchElementException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 /**
  * NOTE: ALL THOSE TESTS ARE AI-GENERATED AND REVIEWED MANUALLY
  *
- * <p>
- * Unit tests for AuthenticationController Tests REST endpoints with mocked
- * service layer
+ * <p>Unit tests for AuthenticationController Tests REST endpoints with mocked service layer
  */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AuthenticationController Unit Tests")
 class AuthenticationControllerTest {
 
-    @Mock
-    private AuthenticationService authenticationService;
+    @Mock private AuthenticationService authenticationService;
 
-    @InjectMocks
-    private AuthenticationController authenticationController;
+    @InjectMocks private AuthenticationController authenticationController;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -74,9 +67,10 @@ class AuthenticationControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(authenticationController)
-                .setControllerAdvice(new GlobalExceptionHandler())
-                .build();
+        mockMvc =
+                MockMvcBuilders.standaloneSetup(authenticationController)
+                        .setControllerAdvice(new GlobalExceptionHandler())
+                        .build();
         objectMapper = new ObjectMapper();
 
         // Setup test user
@@ -123,9 +117,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/admin/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerUserDto)))
+                        post("/api/auth/admin/signup")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(registerUserDto)))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.success").value(true))
@@ -144,9 +138,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/admin/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerUserDto)))
+                        post("/api/auth/admin/signup")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(registerUserDto)))
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false))
@@ -163,9 +157,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/client/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerUserDto)))
+                        post("/api/auth/client/signup")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(registerUserDto)))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.success").value(true))
@@ -183,9 +177,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/client/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerUserDto)))
+                        post("/api/auth/client/signup")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(registerUserDto)))
                 .andDo(print())
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.success").value(false))
@@ -201,9 +195,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginUserDto)))
+                        post("/api/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(loginUserDto)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -223,9 +217,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginUserDto)))
+                        post("/api/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(loginUserDto)))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
@@ -245,9 +239,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/verify-code")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(verifyCodeDto)))
+                        post("/api/auth/verify-code")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(verifyCodeDto)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -268,9 +262,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/verify-code")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(verifyCodeDto)))
+                        post("/api/auth/verify-code")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(verifyCodeDto)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
@@ -290,9 +284,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/verify-code")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(verifyCodeDto)))
+                        post("/api/auth/verify-code")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(verifyCodeDto)))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
@@ -312,9 +306,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/verify-code")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(verifyCodeDto)))
+                        post("/api/auth/verify-code")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(verifyCodeDto)))
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false))
@@ -333,9 +327,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/regenerate-code")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(regenerateCodeDto)))
+                        post("/api/auth/regenerate-code")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(regenerateCodeDto)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -359,9 +353,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/regenerate-code")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(regenerateCodeDto)))
+                        post("/api/auth/regenerate-code")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(regenerateCodeDto)))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
@@ -381,9 +375,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/regenerate-code")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(regenerateCodeDto)))
+                        post("/api/auth/regenerate-code")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(regenerateCodeDto)))
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false))
@@ -399,8 +393,8 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                get("/api/auth/token-refresh")
-                        .header("Authorization", "Bearer valid-refresh-token"))
+                        get("/api/auth/token-refresh")
+                                .header("Authorization", "Bearer valid-refresh-token"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -417,8 +411,8 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                get("/api/auth/token-refresh")
-                        .header("Authorization", "Bearer invalid-token"))
+                        get("/api/auth/token-refresh")
+                                .header("Authorization", "Bearer invalid-token"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
@@ -438,8 +432,8 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                get("/api/auth/token-refresh")
-                        .header("Authorization", "Bearer expired-token"))
+                        get("/api/auth/token-refresh")
+                                .header("Authorization", "Bearer expired-token"))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
@@ -475,9 +469,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/reset-password")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(resetPasswordDto)))
+                        post("/api/auth/reset-password")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(resetPasswordDto)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -499,9 +493,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/reset-password")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(resetPasswordDto)))
+                        post("/api/auth/reset-password")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(resetPasswordDto)))
                 .andDo(print())
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.success").value(false))
@@ -522,9 +516,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/reset-password")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(resetPasswordDto)))
+                        post("/api/auth/reset-password")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(resetPasswordDto)))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
@@ -545,9 +539,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/reset-password")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(resetPasswordDto)))
+                        post("/api/auth/reset-password")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(resetPasswordDto)))
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false))
@@ -582,9 +576,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/google")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(googleIdTokenDto)))
+                        post("/api/auth/google")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(googleIdTokenDto)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -603,9 +597,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/google")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(googleIdTokenDto)))
+                        post("/api/auth/google")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(googleIdTokenDto)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
@@ -623,9 +617,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/google")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(googleIdTokenDto)))
+                        post("/api/auth/google")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(googleIdTokenDto)))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
@@ -643,9 +637,9 @@ class AuthenticationControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                post("/api/auth/google")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(googleIdTokenDto)))
+                        post("/api/auth/google")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(googleIdTokenDto)))
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false))

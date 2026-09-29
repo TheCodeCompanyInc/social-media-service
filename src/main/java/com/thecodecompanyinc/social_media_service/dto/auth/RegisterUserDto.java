@@ -15,7 +15,9 @@ public class RegisterUserDto {
 
     @NotBlank(message = "Username cannot be blank")
     @Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")
-    @Pattern(regexp = "^[a-zA-Z0-9_.]+$", message = "Username can only contain letters, numbers, underscores and dots")
+    @Pattern(
+            regexp = "^[a-zA-Z0-9_.]+$",
+            message = "Username can only contain letters, numbers, underscores and dots")
     private String username;
 
     @NotBlank(message = "Password cannot be blank")
@@ -31,7 +33,8 @@ public class RegisterUserDto {
     private String lastName;
 
     @NotBlank(message = "Phone number cannot be blank")
-    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Phone number must be between 10 and 15 digits and may start "
-            + "with +")
+    @Pattern(
+            regexp = "^\\+?[0-9]{10,15}$",
+            message = "Phone number must be between 10 and 15 digits and may start " + "with +")
     private String phoneNumber;
 }

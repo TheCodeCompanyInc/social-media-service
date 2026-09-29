@@ -13,24 +13,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.Optional;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import com.thecodecompanyinc.social_media_service.dto.auth.GoogleIdTokenDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.GoogleLoginDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.LoginUserDto;
@@ -48,38 +30,45 @@ import com.thecodecompanyinc.social_media_service.service.google.GoogleTokenServ
 import com.thecodecompanyinc.social_media_service.service.jwt.JwtService;
 import com.thecodecompanyinc.social_media_service.service.mail.MailSenderService;
 import com.thecodecompanyinc.social_media_service.service.user.UserService;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /** NOTE: ALL THOSE TESTS ARE AI-GENERATED AND REVIEWED MANUALLY */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AuthenticationService Unit Tests")
 class AuthenticationServiceTest {
 
-    @Mock
-    private UserService userService;
+    @Mock private UserService userService;
 
-    @Mock
-    private JwtService jwtService;
+    @Mock private JwtService jwtService;
 
-    @Mock
-    private MailSenderService mailSenderService;
+    @Mock private MailSenderService mailSenderService;
 
-    @Mock
-    private PasswordEncoder passwordEncoder;
+    @Mock private PasswordEncoder passwordEncoder;
 
-    @Mock
-    private AuthenticationManager authenticationManager;
+    @Mock private AuthenticationManager authenticationManager;
 
-    @Mock
-    private GoogleTokenService googleTokenService;
+    @Mock private GoogleTokenService googleTokenService;
 
-    @Mock
-    private UserMapper userMapper;
+    @Mock private UserMapper userMapper;
 
-    @Mock
-    private LoginResponseMapper loginResponseMapper;
+    @Mock private LoginResponseMapper loginResponseMapper;
 
-    @InjectMocks
-    private AuthenticationServiceImpl authenticationService;
+    @InjectMocks private AuthenticationServiceImpl authenticationService;
 
     private User user;
     private LoginUserDto loginUserDto;
@@ -123,33 +112,38 @@ class AuthenticationServiceTest {
         googleLoginDto.setGivenName("Google");
         googleLoginDto.setFamilyName("User");
 
-        lenient().when(userMapper.toUser(any(RegisterUserDto.class), eq(passwordEncoder)))
-                .thenAnswer(invocation -> {
-                    RegisterUserDto dto = invocation.getArgument(0);
-                    User mappedUser = new User();
-                    mappedUser.setEmail(dto.getEmail());
-                    mappedUser.setUsername(dto.getUsername());
-                    mappedUser.setPhoneNumber(dto.getPhoneNumber());
-                    mappedUser.setFirstName(dto.getFirstName());
-                    mappedUser.setLastName(dto.getLastName());
-                    mappedUser.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
-                    mappedUser.setJoin_date(new Timestamp(System.currentTimeMillis()));
-                    mappedUser.setCode(111111);
-                    mappedUser.setCodeExpiredAt(
-                            new Timestamp(System.currentTimeMillis() + 86400000));
-                    mappedUser.setEmailVerified(false);
-                    return mappedUser;
-                });
+        lenient()
+                .when(userMapper.toUser(any(RegisterUserDto.class), eq(passwordEncoder)))
+                .thenAnswer(
+                        invocation -> {
+                            RegisterUserDto dto = invocation.getArgument(0);
+                            User mappedUser = new User();
+                            mappedUser.setEmail(dto.getEmail());
+                            mappedUser.setUsername(dto.getUsername());
+                            mappedUser.setPhoneNumber(dto.getPhoneNumber());
+                            mappedUser.setFirstName(dto.getFirstName());
+                            mappedUser.setLastName(dto.getLastName());
+                            mappedUser.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
+                            mappedUser.setJoin_date(new Timestamp(System.currentTimeMillis()));
+                            mappedUser.setCode(111111);
+                            mappedUser.setCodeExpiredAt(
+                                    new Timestamp(System.currentTimeMillis() + 86400000));
+                            mappedUser.setEmailVerified(false);
+                            return mappedUser;
+                        });
 
-        lenient().when(loginResponseMapper.toLoginResponse(
-                anyString(), anyString(), any(User.class), eq(jwtService)))
-                .thenAnswer(invocation -> {
-                    LoginResponse response = new LoginResponse();
-                    response.setAccessToken(invocation.getArgument(0));
-                    response.setRefreshToken(invocation.getArgument(1));
-                    response.setUser(invocation.getArgument(2));
-                    return response;
-                });
+        lenient()
+                .when(
+                        loginResponseMapper.toLoginResponse(
+                                anyString(), anyString(), any(User.class), eq(jwtService)))
+                .thenAnswer(
+                        invocation -> {
+                            LoginResponse response = new LoginResponse();
+                            response.setAccessToken(invocation.getArgument(0));
+                            response.setRefreshToken(invocation.getArgument(1));
+                            response.setUser(invocation.getArgument(2));
+                            return response;
+                        });
     }
 
     /** LOGIN TESTS */
@@ -562,5 +556,4 @@ class AuthenticationServiceTest {
         assertThat(response).isNotNull();
         verify(userService, never()).updateFcmToken(anyString(), anyString());
     }
-
 }

@@ -1,5 +1,7 @@
 package com.thecodecompanyinc.social_media_service.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thecodecompanyinc.social_media_service.response.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,9 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thecodecompanyinc.social_media_service.response.ApiResponse;
 
 @Component
 @RequiredArgsConstructor
@@ -33,8 +32,9 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        ApiResponse<Object> apiResponse = ApiResponse.createFailureResponse(
-                "Access denied. You don't have permission to access this resource.");
+        ApiResponse<Object> apiResponse =
+                ApiResponse.createFailureResponse(
+                        "Access denied. You don't have permission to access this resource.");
 
         response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
         response.getWriter().flush();

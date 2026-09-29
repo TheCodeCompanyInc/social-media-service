@@ -1,10 +1,8 @@
 package com.thecodecompanyinc.social_media_service.service.jwt;
 
-import java.util.Date;
-
-import org.springframework.security.core.userdetails.UserDetails;
-
 import io.jsonwebtoken.Claims;
+import java.util.Date;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public interface JwtService {
 
@@ -19,5 +17,4 @@ public interface JwtService {
     Date extractExpiration(String token);
 
     Claims extractAllClaims(String token);
-
 }

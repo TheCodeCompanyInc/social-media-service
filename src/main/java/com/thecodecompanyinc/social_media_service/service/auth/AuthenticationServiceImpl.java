@@ -1,18 +1,5 @@
 package com.thecodecompanyinc.social_media_service.service.auth;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.Random;
-
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.thecodecompanyinc.social_media_service.dto.auth.GoogleIdTokenDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.GoogleLoginDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.LoginUserDto;
@@ -29,9 +16,19 @@ import com.thecodecompanyinc.social_media_service.service.google.GoogleTokenServ
 import com.thecodecompanyinc.social_media_service.service.jwt.JwtService;
 import com.thecodecompanyinc.social_media_service.service.mail.MailSenderService;
 import com.thecodecompanyinc.social_media_service.service.user.UserService;
-
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -58,7 +55,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String refreshToken = jwtService.generateRefreshToken(authenticatedUser);
 
         log.info("Login successful for email: {}", loginUserDto.getEmail());
-        return loginResponseMapper.toLoginResponse(accessToken, refreshToken, authenticatedUser, jwtService);
+        return loginResponseMapper.toLoginResponse(
+                accessToken, refreshToken, authenticatedUser, jwtService);
     }
 
     @Override
@@ -68,7 +66,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.info("Google login attempt");
 
         // Verify the Google ID token and extract user information
-        GoogleLoginDto googleUserInfo = googleTokenService.verifyIdToken(googleIdTokenDto.getIdToken());
+        GoogleLoginDto googleUserInfo =
+                googleTokenService.verifyIdToken(googleIdTokenDto.getIdToken());
         log.info("Google token verified for email: {}", googleUserInfo.getEmail());
 
         // Find existing user or create a new one
@@ -97,9 +96,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         // request against the stored hash.
         // 3. It automatically checks isAccountNonExpired(), isAccountNonLocked(),
         // isCredentialsNonExpired(), and isEnabled()
-        Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginUserDto.getEmail(), loginUserDto.getPassword()));
+        Authentication auth =
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                loginUserDto.getEmail(), loginUserDto.getPassword()));
 
         log.debug("Authentication successful for email: {}", loginUserDto.getEmail());
         return (User) auth.getPrincipal();
@@ -110,11 +110,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public User signup(RegisterUserDto registerUserDto, String role) {
         log.info("Signup attempt for email: {} with role: {}", registerUserDto.getEmail(), role);
         User user = userMapper.toUser(registerUserDto, passwordEncoder);
-        Role signupRole = switch (role) {
-            case "ADMIN" -> Role.ADMIN;
-            case "CLIENT" -> Role.CLIENT;
-            default -> throw new IllegalArgumentException("Unsupported signup role: " + role);
-        };
+        Role signupRole =
+                switch (role) {
+                    case "ADMIN" -> Role.ADMIN;
+                    case "CLIENT" -> Role.CLIENT;
+                    default ->
+                            throw new IllegalArgumentException("Unsupported signup role: " + role);
+                };
         user.setRole(signupRole);
         log.debug("Setting role to {} for email: {}", signupRole, registerUserDto.getEmail());
 
@@ -161,13 +163,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private LoginResponse handleValidToken(String refreshToken) {
         final String email = jwtService.getEmailFromToken(refreshToken);
         log.debug("Extracting email from refresh token: {}", email);
-        User user = userService
-                .getUser(email)
-                .orElseThrow(
-                        () -> {
-                            log.error("User not found for email: {}", email);
-                            return new ResourceNotFoundException("User not found");
-                        });
+        User user =
+                userService
+                        .getUser(email)
+                        .orElseThrow(
+                                () -> {
+                                    log.error("User not found for email: {}", email);
+                                    return new ResourceNotFoundException("User not found");
+                                });
 
         String accessToken = jwtService.generateAccessToken(user);
         log.debug("New access token generated for email: {}", email);
@@ -194,13 +197,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         int code = verifyCodeDto.getCode();
         log.info("Verifying user with email: {}", email);
 
-        User user = userService
-                .getUser(email)
-                .orElseThrow(
-                        () -> {
-                            log.error("User not found for email: {}", email);
-                            return new ResourceNotFoundException("User not found");
-                        });
+        User user =
+                userService
+                        .getUser(email)
+                        .orElseThrow(
+                                () -> {
+                                    log.error("User not found for email: {}", email);
+                                    return new ResourceNotFoundException("User not found");
+                                });
         int verificationCode = user.getCode();
 
         if (code == verificationCode && isCodeValid(user.getCodeExpiredAt())) {
@@ -219,13 +223,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.info("Regenerating OTP for email: {}", email);
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + ONE_DAY_MS);
-        User user = userService
-                .getUser(email)
-                .orElseThrow(
-                        () -> {
-                            log.error("User not found for email: {}", email);
-                            return new ResourceNotFoundException("User not found");
-                        });
+        User user =
+                userService
+                        .getUser(email)
+                        .orElseThrow(
+                                () -> {
+                                    log.error("User not found for email: {}", email);
+                                    return new ResourceNotFoundException("User not found");
+                                });
         int newOtp = generateRandomOtp();
 
         user.setCode(newOtp);
@@ -245,13 +250,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.info("Reset password attempt for email: {}", email);
 
         int code = resetPasswordDto.getCode();
-        User user = userService
-                .getUser(email)
-                .orElseThrow(
-                        () -> {
-                            log.error("User not found for email: {}", email);
-                            return new ResourceNotFoundException("User not found");
-                        });
+        User user =
+                userService
+                        .getUser(email)
+                        .orElseThrow(
+                                () -> {
+                                    log.error("User not found for email: {}", email);
+                                    return new ResourceNotFoundException("User not found");
+                                });
         int verificationCode = user.getCode();
 
         if (code == verificationCode && isCodeValid(user.getCodeExpiredAt())) {
@@ -279,5 +285,4 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return false;
         }
     }
-
 }

@@ -1,24 +1,23 @@
 package com.thecodecompanyinc.social_media_service.service.profile;
 
-import com.thecodecompanyinc.social_media_service.response.ProfileResponse;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 import com.thecodecompanyinc.social_media_service.dto.profile.ProfileUpdateRequestDto;
 import com.thecodecompanyinc.social_media_service.entity.User;
 import com.thecodecompanyinc.social_media_service.exception.ResourceNotFoundException;
 import com.thecodecompanyinc.social_media_service.mapper.ProfileMapper;
 import com.thecodecompanyinc.social_media_service.repository.UserRepository;
+import com.thecodecompanyinc.social_media_service.response.ProfileResponse;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 /** NOTE: ALL THOSE TESTS ARE AI-GENERATED AND REVIEWED MANUALLY */
 @ExtendWith(MockitoExtension.class)
@@ -32,14 +31,15 @@ class ProfileServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        user = User.builder()
-                .id(1L)
-                .username("mahmoud")
-                .firstName("Mahmoud")
-                .lastName("Abdulmawlaa")
-                .email("mahmoud@example.com")
-                .passwordHash("hashed")
-                .build();
+        user =
+                User.builder()
+                        .id(1L)
+                        .username("mahmoud")
+                        .firstName("Mahmoud")
+                        .lastName("Abdulmawlaa")
+                        .email("mahmoud@example.com")
+                        .passwordHash("hashed")
+                        .build();
     }
 
     @Test

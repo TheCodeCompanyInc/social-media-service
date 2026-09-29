@@ -2,11 +2,12 @@ package com.thecodecompanyinc.social_media_service.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.thecodecompanyinc.social_media_service.entity.Role;
+import com.thecodecompanyinc.social_media_service.entity.User;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,9 +16,6 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
-
-import com.thecodecompanyinc.social_media_service.entity.Role;
-import com.thecodecompanyinc.social_media_service.entity.User;
 
 /**
  * NOTE: ALL THOSE TESTS ARE AI-GENERATED AND REVIEWED MANUALLY
@@ -222,4 +220,3 @@ class UserRepositoryTest {
         assertThat(result.getImageUrl()).isEqualTo("Image Url 2");
     }
 }
-

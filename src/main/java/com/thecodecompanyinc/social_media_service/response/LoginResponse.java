@@ -1,9 +1,7 @@
 package com.thecodecompanyinc.social_media_service.response;
 
-import java.util.Date;
-
 import com.thecodecompanyinc.social_media_service.entity.User;
-
+import java.util.Date;
 import lombok.Data;
 
 @Data

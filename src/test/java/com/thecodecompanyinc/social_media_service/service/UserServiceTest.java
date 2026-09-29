@@ -9,11 +9,18 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.thecodecompanyinc.social_media_service.dto.auth.GoogleLoginDto;
+import com.thecodecompanyinc.social_media_service.dto.auth.UpdateUserDto;
+import com.thecodecompanyinc.social_media_service.entity.Role;
+import com.thecodecompanyinc.social_media_service.entity.User;
+import com.thecodecompanyinc.social_media_service.exception.ResourceAlreadyExistsException;
+import com.thecodecompanyinc.social_media_service.repository.UserRepository;
+import com.thecodecompanyinc.social_media_service.service.jwt.JwtService;
+import com.thecodecompanyinc.social_media_service.service.user.UserServiceImpl;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,28 +30,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.thecodecompanyinc.social_media_service.dto.auth.GoogleLoginDto;
-import com.thecodecompanyinc.social_media_service.dto.auth.UpdateUserDto;
-import com.thecodecompanyinc.social_media_service.entity.Role;
-import com.thecodecompanyinc.social_media_service.entity.User;
-import com.thecodecompanyinc.social_media_service.exception.ResourceAlreadyExistsException;
-import com.thecodecompanyinc.social_media_service.repository.UserRepository;
-import com.thecodecompanyinc.social_media_service.service.jwt.JwtService;
-import com.thecodecompanyinc.social_media_service.service.user.UserServiceImpl;
-
 /** Unit tests for UserService Tests user management operations */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("UserService Unit Tests")
 class UserServiceTest {
 
-    @Mock
-    private UserRepository userRepository;
+    @Mock private UserRepository userRepository;
 
-    @Mock
-    private JwtService jwtService;
+    @Mock private JwtService jwtService;
 
-    @InjectMocks
-    private UserServiceImpl userService;
+    @InjectMocks private UserServiceImpl userService;
 
     private User user;
     private String authHeader;

@@ -1,15 +1,6 @@
 package com.thecodecompanyinc.social_media_service.entity;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.List;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,11 +9,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
 @Setter
@@ -67,8 +64,7 @@ public class User implements UserDetails {
     @Builder.Default
     private OnlineStatus onlineStatus = OnlineStatus.OFFLINE;
 
-    @Column
-    private Date dob;
+    @Column private Date dob;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -80,20 +76,13 @@ public class User implements UserDetails {
     // TODO: model last_updated_location
     // TODO: model last_updated_location_at
 
-    @JsonIgnore
-    @Column
-    private int code;
+    @JsonIgnore @Column private int code;
 
-    @JsonIgnore
-    @Column
-    private Timestamp codeExpiredAt;
+    @JsonIgnore @Column private Timestamp codeExpiredAt;
 
-    @Column
-    private boolean emailVerified;
+    @Column private boolean emailVerified;
 
-    @JsonIgnore
-    @Column
-    private String firebaseToken;
+    @JsonIgnore @Column private String firebaseToken;
 
     @Override
     @JsonIgnore

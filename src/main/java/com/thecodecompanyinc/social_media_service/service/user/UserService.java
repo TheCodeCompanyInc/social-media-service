@@ -1,13 +1,12 @@
 package com.thecodecompanyinc.social_media_service.service.user;
 
-import java.text.ParseException;
-import java.util.List;
-import java.util.Optional;
-
 import com.thecodecompanyinc.social_media_service.dto.auth.GoogleLoginDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.UpdateUserDto;
 import com.thecodecompanyinc.social_media_service.entity.Role;
 import com.thecodecompanyinc.social_media_service.entity.User;
+import java.text.ParseException;
+import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
     User saveUser(User user);
