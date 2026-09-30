@@ -31,7 +31,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      SPRING_PROFILES_ACTIVE=docker
+      SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/thecodecompanyinc
       SPRING_DATASOURCE_USERNAME: thecodecompanyinc
       SPRING_DATASOURCE_PASSWORD: thecodecompanyinc
