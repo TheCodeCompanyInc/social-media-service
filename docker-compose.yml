@@ -25,12 +25,22 @@ services:
     container_name: spring-boot-app
     ports:
       - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
+      SPRING_PROFILES_ACTIVE=docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/thecodecompanyinc
       SPRING_DATASOURCE_USERNAME: thecodecompanyinc
       SPRING_DATASOURCE_PASSWORD: thecodecompanyinc
-    depends_on:
-      - postgres
+      OAUTH2_GOOGLE_CLIENT_ID
+      OAUTH2_GOOGLE_CLIENT_SECRET
+      OAUTH2_GOOGLE_REDIRECT_URI
+      OAUTH2_GOOGLE_ANDROID_CLIENT_ID
+      OAUTH2_GOOGLE_IOS_CLIENT_ID
+    restart: on-failure
 
 volumes:
   postgres_data:
