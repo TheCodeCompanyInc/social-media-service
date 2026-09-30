@@ -57,12 +57,12 @@ jobs:
           echo "Waiting for app to start..."
           sleep 30
           docker ps
-          docker logs springboot-app | tail -n 50
+          docker logs spring-boot-app | tail -n 50
 
       - name: Check Spring Boot Endpoint
         run: |
           echo "Testing /api/auth/test endpoint..."
-          curl --fail http://localhost:8000/api/auth/test || (echo "❌ Endpoint not reachable" && exit 1)
+          curl --fail http://localhost:8080/api/auth/test || (echo "❌ Endpoint not reachable" && exit 1)
 
       - name: Tear down containers
         if: always()
