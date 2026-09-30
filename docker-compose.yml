@@ -1,0 +1,36 @@
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: thecodecompanyinc
+      POSTGRES_PASSWORD: thecodecompanyinc
+      POSTGRES_DB: thecodecompanyinc
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  spring-boot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring-boot-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/thecodecompanyinc
+      SPRING_DATASOURCE_USERNAME: thecodecompanyinc
+      SPRING_DATASOURCE_PASSWORD: thecodecompanyinc
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
