@@ -45,3 +45,25 @@ jobs:
         with:
           name: surefire-reports
           path: target/surefire-reports/
+
+      - name: Build and Run Docker containers
+        env:
+          OAUTH2_GOOGLE_CLIENT_ID: "dummy-id"
+          OAUTH2_GOOGLE_CLIENT_SECRET: "dummy-secret"
+          OAUTH2_GOOGLE_ANDROID_CLIENT_ID: "dummy-android"
+          OAUTH2_GOOGLE_IOS_CLIENT_ID: "dummy-ios"
+        run: |
+          docker compose up --build -d
+          echo "Waiting for app to start..."
+          sleep 30
+          docker ps
+          docker logs springboot-app | tail -n 50
+
+      - name: Check Spring Boot Endpoint
+        run: |
+          echo "Testing /api/auth/test endpoint..."
+          curl --fail http://localhost:8000/api/auth/test || (echo "❌ Endpoint not reachable" && exit 1)
+
+      - name: Tear down containers
+        if: always()
+        run: docker compose down
