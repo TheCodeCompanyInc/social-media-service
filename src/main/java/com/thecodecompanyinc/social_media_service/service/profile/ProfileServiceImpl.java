@@ -1,11 +1,11 @@
 package com.thecodecompanyinc.social_media_service.service.profile;
 
 import com.thecodecompanyinc.social_media_service.dto.profile.ProfileUpdateRequestDto;
-import com.thecodecompanyinc.social_media_service.response.ProfileResponse;
 import com.thecodecompanyinc.social_media_service.entity.User;
 import com.thecodecompanyinc.social_media_service.exception.ResourceNotFoundException;
 import com.thecodecompanyinc.social_media_service.mapper.ProfileMapper;
 import com.thecodecompanyinc.social_media_service.repository.UserRepository;
+import com.thecodecompanyinc.social_media_service.response.ProfileResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,8 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional
-    public ProfileResponse updateProfile(Long userId, ProfileUpdateRequestDto profileUpdateRequestDto) {
+    public ProfileResponse updateProfile(
+            Long userId, ProfileUpdateRequestDto profileUpdateRequestDto) {
         User user = findUserOrThrow(userId);
         profileMapper.applyUpdate(profileUpdateRequestDto, user);
         userRepository.save(user);
@@ -40,7 +41,8 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     private User findUserOrThrow(Long userId) {
-        return userRepository.findById(userId)
+        return userRepository
+                .findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }

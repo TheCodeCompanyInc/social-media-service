@@ -1,8 +1,17 @@
 package com.thecodecompanyinc.social_media_service.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thecodecompanyinc.social_media_service.response.ApiResponse;
+import com.thecodecompanyinc.social_media_service.service.jwt.JwtService;
+import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,18 +20,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thecodecompanyinc.social_media_service.response.ApiResponse;
-import com.thecodecompanyinc.social_media_service.service.jwt.JwtService;
-
-import io.jsonwebtoken.ExpiredJwtException;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
@@ -34,7 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(
+            HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
@@ -85,8 +83,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new RuntimeException("User is not verified!");
             }
 
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null,
-                    userDetails.getAuthorities());
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
 
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authToken);
@@ -103,5 +102,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         out.write(objectMapper.writeValueAsString(apiResponse));
         out.flush();
     }
-
 }

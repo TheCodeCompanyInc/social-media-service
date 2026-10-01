@@ -1,24 +1,20 @@
 package com.thecodecompanyinc.social_media_service.service.jwt;
 
-import java.util.Date;
-import java.util.UUID;
-import java.util.function.Function;
-
-import javax.crypto.SecretKey;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
 import com.thecodecompanyinc.social_media_service.entity.User;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import java.util.Date;
+import java.util.UUID;
+import java.util.function.Function;
+import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -110,5 +106,4 @@ public class JwtServiceImpl implements JwtService {
     public Claims extractAllClaims(String token) {
         return Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token).getBody();
     }
-
 }

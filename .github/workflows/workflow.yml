@@ -1,0 +1,69 @@
+name: Build, Run, and Test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+      - dev
+
+jobs:
+  build-run-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Branches
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Cache Maven Packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      
+      - name: Run Spotless Formatter/Linter Checks
+        run: mvn spotless:check
+
+      - name: Build JAR with Maven
+        run: mvn -B clean package -DskipTests
+
+      - name: Run Unit & Integration Tests
+        run: mvn test -DforkCount=1 -DreuseForks=false
+
+      - name: Upload test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports/
+
+      - name: Build and Run Docker containers
+        env:
+          OAUTH2_GOOGLE_CLIENT_ID: "dummy-id"
+          OAUTH2_GOOGLE_CLIENT_SECRET: "dummy-secret"
+          OAUTH2_GOOGLE_ANDROID_CLIENT_ID: "dummy-android"
+          OAUTH2_GOOGLE_IOS_CLIENT_ID: "dummy-ios"
+        run: |
+          docker compose up --build -d
+          echo "Waiting for app to start..."
+          sleep 30
+          docker ps
+          docker logs spring-boot-app | tail -n 50
+
+      - name: Check Spring Boot Endpoint
+        run: |
+          echo "Testing /api/auth/test endpoint..."
+          curl --fail http://localhost:8080/api/auth/test || (echo "❌ Endpoint not reachable" && exit 1)
+
+      - name: Tear down containers
+        if: always()
+        run: docker compose down

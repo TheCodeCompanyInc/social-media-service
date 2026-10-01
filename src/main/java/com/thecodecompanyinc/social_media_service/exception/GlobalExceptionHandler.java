@@ -2,11 +2,15 @@ package com.thecodecompanyinc.social_media_service.exception;
 
 import static com.thecodecompanyinc.social_media_service.response.ApiResponse.createFailureResponse;
 
+import com.thecodecompanyinc.social_media_service.response.ApiResponse;
+import com.thecodecompanyinc.social_media_service.response.MessageResponse;
+import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.validation.ConstraintViolationException;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -23,13 +27,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import com.thecodecompanyinc.social_media_service.response.ApiResponse;
-import com.thecodecompanyinc.social_media_service.response.MessageResponse;
-
-import io.jsonwebtoken.ExpiredJwtException;
-import jakarta.validation.ConstraintViolationException;
-import lombok.extern.slf4j.Slf4j;
-
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
@@ -44,7 +41,7 @@ public class GlobalExceptionHandler {
                 .forEach(err -> errors.put(err.getField(), err.getDefaultMessage()));
         String errorMessage = "Validation failed: " + errors;
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(createFailureResponse(errorMessage));
+                .body(createFailureResponse(errorMessage + ex.getMessage()));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -55,9 +52,10 @@ public class GlobalExceptionHandler {
         ex.getConstraintViolations()
                 .forEach(
                         cv -> {
-                            String path = cv.getPropertyPath() != null
-                                    ? cv.getPropertyPath().toString()
-                                    : "";
+                            String path =
+                                    cv.getPropertyPath() != null
+                                            ? cv.getPropertyPath().toString()
+                                            : "";
                             errors.put(path, cv.getMessage());
                         });
         String errorMessage = "Constraint violations: " + errors;
@@ -87,13 +85,15 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ApiResponse<MessageResponse>> handleMethodArgumentTypeMismatch(
             MethodArgumentTypeMismatchException ex) {
-        String requiredTypeName = ex.getRequiredType() != null
-                ? ex.getRequiredType().getSimpleName()
-                : "unknown type";
-        String errorMessage = "Method argument type mismatch: "
-                + ex.getName()
-                + " should be of type "
-                + requiredTypeName;
+        String requiredTypeName =
+                ex.getRequiredType() != null
+                        ? ex.getRequiredType().getSimpleName()
+                        : "unknown type";
+        String errorMessage =
+                "Method argument type mismatch: "
+                        + ex.getName()
+                        + " should be of type "
+                        + requiredTypeName;
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(createFailureResponse(errorMessage));
     }
@@ -102,7 +102,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     public ResponseEntity<ApiResponse<MessageResponse>> handleHttpRequestMethodNotSupported(
             HttpRequestMethodNotSupportedException ex) {
-        String errorMessage = "HTTP request method '" + ex.getMethod() + "' is not supported for this endpoint";
+        String errorMessage =
+                "HTTP request method '" + ex.getMethod() + "' is not supported for this endpoint";
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
                 .body(createFailureResponse(errorMessage));
     }
@@ -217,7 +218,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<MessageResponse>> handleGenericException(Exception ex) {
         log.error("Unexpected error: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(createFailureResponse("Internal server error"));
+                .body(createFailureResponse("Internal server error" + ex.getMessage()));
     }
 
     @ExceptionHandler(DuplicateKeyException.class)

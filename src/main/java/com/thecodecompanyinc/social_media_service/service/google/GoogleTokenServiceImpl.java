@@ -1,18 +1,15 @@
 package com.thecodecompanyinc.social_media_service.service.google;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-
-import org.jspecify.annotations.NonNull;
-import org.springframework.stereotype.Service;
-
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.thecodecompanyinc.social_media_service.dto.auth.GoogleLoginDto;
-
 import io.swagger.v3.oas.annotations.Operation;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -72,7 +69,8 @@ public class GoogleTokenServiceImpl implements GoogleTokenService {
             if (name != null && !name.isBlank()) {
                 String trimmedName = name.trim();
                 int spaceIndex = trimmedName.indexOf(' ');
-                resolvedGivenName = (spaceIndex > 0) ? trimmedName.substring(0, spaceIndex) : trimmedName;
+                resolvedGivenName =
+                        (spaceIndex > 0) ? trimmedName.substring(0, spaceIndex) : trimmedName;
             } else if (email != null && !email.isBlank()) {
                 String localPart = email;
                 int atIndex = email.indexOf('@');

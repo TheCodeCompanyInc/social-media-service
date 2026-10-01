@@ -1,8 +1,8 @@
 package com.thecodecompanyinc.social_media_service.mapper;
 
-import com.thecodecompanyinc.social_media_service.response.ProfileResponse;
 import com.thecodecompanyinc.social_media_service.dto.profile.ProfileUpdateRequestDto;
 import com.thecodecompanyinc.social_media_service.entity.User;
+import com.thecodecompanyinc.social_media_service.response.ProfileResponse;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")

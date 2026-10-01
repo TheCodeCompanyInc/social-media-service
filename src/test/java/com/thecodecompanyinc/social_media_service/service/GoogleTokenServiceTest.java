@@ -1,6 +1,5 @@
 package com.thecodecompanyinc.social_media_service.service;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
@@ -9,7 +8,6 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.thecodecompanyinc.social_media_service.dto.auth.GoogleLoginDto;
 import com.thecodecompanyinc.social_media_service.service.google.GoogleTokenServiceImpl;
-
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import org.junit.jupiter.api.DisplayName;

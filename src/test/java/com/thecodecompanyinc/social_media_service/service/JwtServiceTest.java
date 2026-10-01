@@ -3,19 +3,16 @@ package com.thecodecompanyinc.social_media_service.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.lang.reflect.Field;
-import java.util.Date;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import com.thecodecompanyinc.social_media_service.entity.Role;
 import com.thecodecompanyinc.social_media_service.entity.User;
 import com.thecodecompanyinc.social_media_service.service.jwt.JwtServiceImpl;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import java.lang.reflect.Field;
+import java.util.Date;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 /** NOTE: ALL THOSE TESTS ARE AI-GENERATED AND REVIEWED MANUALLY */
 @DisplayName("JwtService Unit Tests")

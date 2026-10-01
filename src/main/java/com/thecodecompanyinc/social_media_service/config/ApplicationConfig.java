@@ -1,7 +1,14 @@
 package com.thecodecompanyinc.social_media_service.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+import com.thecodecompanyinc.social_media_service.exception.ResourceNotFoundException;
+import com.thecodecompanyinc.social_media_service.service.user.UserService;
 import java.util.List;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,16 +19,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.gson.GsonFactory;
-import com.thecodecompanyinc.social_media_service.exception.ResourceNotFoundException;
-import com.thecodecompanyinc.social_media_service.service.user.UserService;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @RequiredArgsConstructor
@@ -44,16 +41,20 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-            throws Exception {
-        AuthenticationManager defaultManager = authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        AuthenticationManager defaultManager =
+                authenticationConfiguration.getAuthenticationManager();
 
         return new ProviderManager(List.of(authenticationProvider()), defaultManager);
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return email -> userService.getUser(email).orElseThrow(() -> new ResourceNotFoundException("User not found!"));
+        return email ->
+                userService
+                        .getUser(email)
+                        .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
     }
 
     @Bean
@@ -63,15 +64,15 @@ public class ApplicationConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService());
+        DaoAuthenticationProvider authProvider =
+                new DaoAuthenticationProvider(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
 
         return authProvider;
     }
 
     /**
-     * Builds the GoogleIdTokenVerifier with all possible client IDs (Web, Android,
-     * iOS) to support
+     * Builds the GoogleIdTokenVerifier with all possible client IDs (Web, Android, iOS) to support
      * tokens from different platforms.
      */
     @Bean
@@ -95,9 +96,8 @@ public class ApplicationConfig {
         log.debug("Verifier configured with {} client ID(s)", clientIds.size());
 
         return new GoogleIdTokenVerifier.Builder(
-                new NetHttpTransport(), GsonFactory.getDefaultInstance())
+                        new NetHttpTransport(), GsonFactory.getDefaultInstance())
                 .setAudience(clientIds)
                 .build();
     }
-
 }

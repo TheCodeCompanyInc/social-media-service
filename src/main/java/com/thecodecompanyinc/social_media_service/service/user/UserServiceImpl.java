@@ -1,16 +1,5 @@
 package com.thecodecompanyinc.social_media_service.service.user;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.thecodecompanyinc.social_media_service.dto.auth.GoogleLoginDto;
 import com.thecodecompanyinc.social_media_service.dto.auth.UpdateUserDto;
 import com.thecodecompanyinc.social_media_service.entity.Role;
@@ -19,9 +8,17 @@ import com.thecodecompanyinc.social_media_service.exception.ResourceAlreadyExist
 import com.thecodecompanyinc.social_media_service.exception.ResourceNotFoundException;
 import com.thecodecompanyinc.social_media_service.repository.UserRepository;
 import com.thecodecompanyinc.social_media_service.service.jwt.JwtService;
-
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -61,14 +58,8 @@ public class UserServiceImpl implements UserService {
             User newUser = new User();
             newUser.setEmail(dto.getEmail());
             newUser.setUsername(dto.getName());
-            newUser.setFirstName(
-                    dto.getGivenName() != null
-                            ? dto.getGivenName()
-                            : dto.getName());
-            newUser.setLastName(
-                    dto.getFamilyName() != null
-                            ? dto.getFamilyName()
-                            : "");
+            newUser.setFirstName(dto.getGivenName() != null ? dto.getGivenName() : dto.getName());
+            newUser.setLastName(dto.getFamilyName() != null ? dto.getFamilyName() : "");
             newUser.setRole(Role.CLIENT);
             newUser.setPasswordHash("N/A");
             newUser.setPhoneNumber("N/A");
@@ -83,8 +74,7 @@ public class UserServiceImpl implements UserService {
                     "Google user with email {} was created concurrently; loading existing user",
                     dto.getEmail());
 
-            return getUser(dto.getEmail())
-                    .orElseThrow(() -> e);
+            return getUser(dto.getEmail()).orElseThrow(() -> e);
         }
     }
 
@@ -198,13 +188,14 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updateFcmToken(String email, String fcmToken) {
         log.info("Updating FCM token for user with email: {}", email);
-        User user = userRepository
-                .findByEmail(email)
-                .orElseThrow(
-                        () -> {
-                            log.error("User not found with email: {}", email);
-                            return new ResourceNotFoundException("user not found");
-                        });
+        User user =
+                userRepository
+                        .findByEmail(email)
+                        .orElseThrow(
+                                () -> {
+                                    log.error("User not found with email: {}", email);
+                                    return new ResourceNotFoundException("user not found");
+                                });
         user.setFirebaseToken(fcmToken);
         log.info("FCM token updated successfully for user id: {}", user.getId());
     }
@@ -230,5 +221,4 @@ public class UserServiceImpl implements UserService {
         log.info("emailVerified updated successfully for user id: {}", userId);
         return saved;
     }
-
 }
